@@ -7,7 +7,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/PuerkitoBio/agora/bytecode"
+	"github.com/bobg/agora/bytecode"
 )
 
 var (
@@ -17,7 +17,7 @@ var (
 )
 
 // An Asm is an assembly source code compiler. It implements the runtime.Compiler
-// interface, so that it is suitable for runtime.Ctx.
+// interface, so that it is suitable for runtime.Ktx.
 type Asm struct {
 	s     *bufio.Scanner
 	f     *bytecode.File

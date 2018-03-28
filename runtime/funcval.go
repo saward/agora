@@ -7,7 +7,7 @@ import (
 // funcVal implements most of the Val interface's methods, except
 // Native() which must be done on the actual type.
 type funcVal struct {
-	ctx  *Ctx
+	ktx  *Kontext
 	name string
 }
 
@@ -62,7 +62,7 @@ func newAgoraFuncVal(def *agoraFuncDef, vm *agoraFuncVM) *agoraFuncVal {
 	}
 	return &agoraFuncVal{
 		&funcVal{
-			def.ctx,
+			def.ktx,
 			def.name,
 		},
 		def,
@@ -82,8 +82,8 @@ func (a *agoraFuncVal) Call(this Val, args ...Val) Val {
 	}
 	// Set the `this` each time, the same value may have been assigned to an object and called
 	vm.this = this
-	a.ctx.pushFn(a, vm)
-	defer a.ctx.popFn()
+	a.ktx.pushFn(a, vm)
+	defer a.ktx.popFn()
 	return vm.run(args...)
 }
 
@@ -94,7 +94,7 @@ func (a *agoraFuncVal) Native() interface{} {
 
 // Get the coroutine status of the function.
 func (a *agoraFuncVal) status() string {
-	if a.ctx.IsRunning(a) {
+	if a.ktx.IsRunning(a) {
 		return "running"
 	} else if a.coroState != nil {
 		return "suspended"

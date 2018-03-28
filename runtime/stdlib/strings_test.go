@@ -3,7 +3,7 @@ package stdlib
 import (
 	"testing"
 
-	"github.com/PuerkitoBio/agora/runtime"
+	"github.com/bobg/agora/runtime"
 )
 
 func TestStringsMatches(t *testing.T) {
@@ -56,9 +56,9 @@ func TestStringsMatches(t *testing.T) {
 			},
 		},
 	}
-	ctx := runtime.NewCtx(nil, nil)
+	ktx := runtime.NewKtx(nil, nil)
 	sm := new(StringsMod)
-	sm.SetCtx(ctx)
+	sm.SetKtx(ktx)
 	for i, c := range cases {
 		ret := sm.strings_Matches(c.args...)
 		ob := ret.(runtime.Object)
@@ -92,9 +92,9 @@ func TestStringsMatches(t *testing.T) {
 }
 
 func TestStringsToUpper(t *testing.T) {
-	ctx := runtime.NewCtx(nil, nil)
+	ktx := runtime.NewKtx(nil, nil)
 	sm := new(StringsMod)
-	sm.SetCtx(ctx)
+	sm.SetKtx(ktx)
 	ret := sm.strings_ToUpper(runtime.String("this"), runtime.String("Is"), runtime.String("A"), runtime.String("... strInG"))
 	exp := "THISISA... STRING"
 	if ret.String() != exp {
@@ -103,9 +103,9 @@ func TestStringsToUpper(t *testing.T) {
 }
 
 func TestStringsToLower(t *testing.T) {
-	ctx := runtime.NewCtx(nil, nil)
+	ktx := runtime.NewKtx(nil, nil)
 	sm := new(StringsMod)
-	sm.SetCtx(ctx)
+	sm.SetKtx(ktx)
 	ret := sm.strings_ToLower(runtime.String("this"), runtime.String("Is"), runtime.String("A"), runtime.String("... strInG"))
 	exp := "thisisa... string"
 	if ret.String() != exp {
@@ -114,9 +114,9 @@ func TestStringsToLower(t *testing.T) {
 }
 
 func TestStringsHasPrefix(t *testing.T) {
-	ctx := runtime.NewCtx(nil, nil)
+	ktx := runtime.NewKtx(nil, nil)
 	sm := new(StringsMod)
-	sm.SetCtx(ctx)
+	sm.SetKtx(ktx)
 	ret := sm.strings_HasPrefix(runtime.String("what prefix?"), runtime.String("no"), runtime.Nil, runtime.Number(3), runtime.String("wh"))
 	if !ret.Bool() {
 		t.Errorf("expected true, got false")
@@ -128,9 +128,9 @@ func TestStringsHasPrefix(t *testing.T) {
 }
 
 func TestStringsHasSuffix(t *testing.T) {
-	ctx := runtime.NewCtx(nil, nil)
+	ktx := runtime.NewKtx(nil, nil)
 	sm := new(StringsMod)
-	sm.SetCtx(ctx)
+	sm.SetKtx(ktx)
 	ret := sm.strings_HasSuffix(runtime.String("suffix, you say"), runtime.String("ay"), runtime.Nil, runtime.Number(3), runtime.String("wh"))
 	if !ret.Bool() {
 		t.Errorf("expected true, got false")
@@ -142,9 +142,9 @@ func TestStringsHasSuffix(t *testing.T) {
 }
 
 func TestStringsByteAt(t *testing.T) {
-	ctx := runtime.NewCtx(nil, nil)
+	ktx := runtime.NewKtx(nil, nil)
 	sm := new(StringsMod)
-	sm.SetCtx(ctx)
+	sm.SetKtx(ktx)
 	src := "some string"
 	ix := 0
 	ret := sm.strings_ByteAt(runtime.String(src), runtime.Number(ix))
@@ -164,9 +164,9 @@ func TestStringsByteAt(t *testing.T) {
 }
 
 func TestStringsConcat(t *testing.T) {
-	ctx := runtime.NewCtx(nil, nil)
+	ktx := runtime.NewKtx(nil, nil)
 	sm := new(StringsMod)
-	sm.SetCtx(ctx)
+	sm.SetKtx(ktx)
 	ret := sm.strings_Concat(runtime.String("hello"), runtime.Number(12), runtime.Bool(true), runtime.String("end"))
 	exp := "hello12trueend"
 	if ret.String() != exp {
@@ -175,9 +175,9 @@ func TestStringsConcat(t *testing.T) {
 }
 
 func TestStringsContains(t *testing.T) {
-	ctx := runtime.NewCtx(nil, nil)
+	ktx := runtime.NewKtx(nil, nil)
 	sm := new(StringsMod)
-	sm.SetCtx(ctx)
+	sm.SetKtx(ktx)
 	ret := sm.strings_Contains(runtime.String("contains something"), runtime.String("what"), runtime.Nil, runtime.Number(3), runtime.String("some"))
 	if !ret.Bool() {
 		t.Errorf("expected true, got false")
@@ -189,9 +189,9 @@ func TestStringsContains(t *testing.T) {
 }
 
 func TestStringsIndex(t *testing.T) {
-	ctx := runtime.NewCtx(nil, nil)
+	ktx := runtime.NewKtx(nil, nil)
 	sm := new(StringsMod)
-	sm.SetCtx(ctx)
+	sm.SetKtx(ktx)
 	ret := sm.strings_Index(runtime.String("agora"), runtime.String("arg"), runtime.Nil, runtime.Number(3), runtime.String("go"))
 	exp := 1
 	if ret.Int() != int64(exp) {
@@ -205,9 +205,9 @@ func TestStringsIndex(t *testing.T) {
 }
 
 func TestStringsLastIndex(t *testing.T) {
-	ctx := runtime.NewCtx(nil, nil)
+	ktx := runtime.NewKtx(nil, nil)
 	sm := new(StringsMod)
-	sm.SetCtx(ctx)
+	sm.SetKtx(ktx)
 	ret := sm.strings_LastIndex(runtime.String("agoragore"), runtime.String("arg"), runtime.Nil, runtime.Number(3), runtime.String("go"))
 	exp := 5
 	if ret.Int() != int64(exp) {
@@ -221,9 +221,9 @@ func TestStringsLastIndex(t *testing.T) {
 }
 
 func TestStringsSlice(t *testing.T) {
-	ctx := runtime.NewCtx(nil, nil)
+	ktx := runtime.NewKtx(nil, nil)
 	sm := new(StringsMod)
-	sm.SetCtx(ctx)
+	sm.SetKtx(ktx)
 	ret := sm.strings_Slice(runtime.String("agora"), runtime.Number(2))
 	exp := "ora"
 	if ret.String() != exp {
@@ -237,9 +237,9 @@ func TestStringsSlice(t *testing.T) {
 }
 
 func TestStringsSplit(t *testing.T) {
-	ctx := runtime.NewCtx(nil, nil)
+	ktx := runtime.NewKtx(nil, nil)
 	sm := new(StringsMod)
-	sm.SetCtx(ctx)
+	sm.SetKtx(ktx)
 	ret := sm.strings_Split(runtime.String("aa:bb::dd"), runtime.String(":"))
 	ob := ret.(runtime.Object)
 	exp := []string{"aa", "bb", "", "dd"}
@@ -267,9 +267,9 @@ func TestStringsSplit(t *testing.T) {
 }
 
 func TestStringsJoin(t *testing.T) {
-	ctx := runtime.NewCtx(nil, nil)
+	ktx := runtime.NewKtx(nil, nil)
 	sm := new(StringsMod)
-	sm.SetCtx(ctx)
+	sm.SetKtx(ktx)
 	parts := []string{"this", "is", "", "it!"}
 	ob := runtime.NewObject()
 	for i, v := range parts {
@@ -325,9 +325,9 @@ func TestStringsReplace(t *testing.T) {
 			exp: "This is the source",
 		},
 	}
-	ctx := runtime.NewCtx(nil, nil)
+	ktx := runtime.NewKtx(nil, nil)
 	sm := new(StringsMod)
-	sm.SetCtx(ctx)
+	sm.SetKtx(ktx)
 	for i, c := range cases {
 		ret := sm.strings_Replace(c.args...)
 		if ret.String() != c.exp {
@@ -361,9 +361,9 @@ func TestStringsTrim(t *testing.T) {
 			exp: "love",
 		},
 	}
-	ctx := runtime.NewCtx(nil, nil)
+	ktx := runtime.NewKtx(nil, nil)
 	sm := new(StringsMod)
-	sm.SetCtx(ctx)
+	sm.SetKtx(ktx)
 	for i, c := range cases {
 		ret := sm.strings_Trim(c.args...)
 		if ret.String() != c.exp {

@@ -6,7 +6,7 @@
 //
 // Installation
 //
-// 			go get github.com/PuerkitoBio/agora/...
+// 			go get github.com/bobg/agora/...
 //
 // Resources
 //
@@ -17,5 +17,5 @@
 // Other documentation exist for the agora language itself, the stdlib, installation,
 // and such.
 //
-// See https://github.com/PuerkitoBio/agora#readme for more details.
+// See https://github.com/bobg/agora#readme for more details.
 package agora

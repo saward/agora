@@ -3,13 +3,13 @@ package stdlib
 import (
 	"path/filepath"
 
-	"github.com/PuerkitoBio/agora/runtime"
+	"github.com/bobg/agora/runtime"
 )
 
 // The filepath module, as documented in
-// https://github.com/PuerkitoBio/agora/wiki/Standard-library
+// https://github.com/bobg/agora/wiki/Standard-library
 type FilepathMod struct {
-	ctx *runtime.Ctx
+	ktx *runtime.Kontext
 	ob  runtime.Object
 }
 
@@ -22,18 +22,18 @@ func (fp *FilepathMod) Run(_ ...runtime.Val) (v runtime.Val, err error) {
 	if fp.ob == nil {
 		// Prepare the object
 		fp.ob = runtime.NewObject()
-		fp.ob.Set(runtime.String("Abs"), runtime.NewNativeFunc(fp.ctx, "filepath.Abs", fp.filepath_Abs))
-		fp.ob.Set(runtime.String("Base"), runtime.NewNativeFunc(fp.ctx, "filepath.Base", fp.filepath_Base))
-		fp.ob.Set(runtime.String("Dir"), runtime.NewNativeFunc(fp.ctx, "filepath.Dir", fp.filepath_Dir))
-		fp.ob.Set(runtime.String("Ext"), runtime.NewNativeFunc(fp.ctx, "filepath.Ext", fp.filepath_Ext))
-		fp.ob.Set(runtime.String("IsAbs"), runtime.NewNativeFunc(fp.ctx, "filepath.IsAbs", fp.filepath_IsAbs))
-		fp.ob.Set(runtime.String("Join"), runtime.NewNativeFunc(fp.ctx, "filepath.Join", fp.filepath_Join))
+		fp.ob.Set(runtime.String("Abs"), runtime.NewNativeFunc(fp.ktx, "filepath.Abs", fp.filepath_Abs))
+		fp.ob.Set(runtime.String("Base"), runtime.NewNativeFunc(fp.ktx, "filepath.Base", fp.filepath_Base))
+		fp.ob.Set(runtime.String("Dir"), runtime.NewNativeFunc(fp.ktx, "filepath.Dir", fp.filepath_Dir))
+		fp.ob.Set(runtime.String("Ext"), runtime.NewNativeFunc(fp.ktx, "filepath.Ext", fp.filepath_Ext))
+		fp.ob.Set(runtime.String("IsAbs"), runtime.NewNativeFunc(fp.ktx, "filepath.IsAbs", fp.filepath_IsAbs))
+		fp.ob.Set(runtime.String("Join"), runtime.NewNativeFunc(fp.ktx, "filepath.Join", fp.filepath_Join))
 	}
 	return fp.ob, nil
 }
 
-func (fp *FilepathMod) SetCtx(c *runtime.Ctx) {
-	fp.ctx = c
+func (fp *FilepathMod) SetKtx(c *runtime.Kontext) {
+	fp.ktx = c
 }
 
 func (fp *FilepathMod) filepath_Abs(args ...runtime.Val) runtime.Val {

@@ -4,13 +4,13 @@ import (
 	"math"
 	"math/rand"
 
-	"github.com/PuerkitoBio/agora/runtime"
+	"github.com/bobg/agora/runtime"
 )
 
 // The math module, as documented in
-// https://github.com/PuerkitoBio/agora/wiki/Standard-library
+// https://github.com/bobg/agora/wiki/Standard-library
 type MathMod struct {
-	ctx *runtime.Ctx
+	ktx *runtime.Kontext
 	ob  runtime.Object
 }
 
@@ -24,39 +24,39 @@ func (m *MathMod) Run(_ ...runtime.Val) (v runtime.Val, err error) {
 		// Prepare the object
 		m.ob = runtime.NewObject()
 		m.ob.Set(runtime.String("Pi"), runtime.Number(math.Pi))
-		m.ob.Set(runtime.String("Abs"), runtime.NewNativeFunc(m.ctx, "math.Abs", m.math_Abs))
-		m.ob.Set(runtime.String("Acos"), runtime.NewNativeFunc(m.ctx, "math.Acos", m.math_Acos))
-		m.ob.Set(runtime.String("Acosh"), runtime.NewNativeFunc(m.ctx, "math.Acosh", m.math_Acosh))
-		m.ob.Set(runtime.String("Asin"), runtime.NewNativeFunc(m.ctx, "math.Asin", m.math_Asin))
-		m.ob.Set(runtime.String("Asinh"), runtime.NewNativeFunc(m.ctx, "math.Asinh", m.math_Asinh))
-		m.ob.Set(runtime.String("Atan"), runtime.NewNativeFunc(m.ctx, "math.Atan", m.math_Atan))
-		m.ob.Set(runtime.String("Atan2"), runtime.NewNativeFunc(m.ctx, "math.Atan2", m.math_Atan2))
-		m.ob.Set(runtime.String("Atanh"), runtime.NewNativeFunc(m.ctx, "math.Atanh", m.math_Atanh))
-		m.ob.Set(runtime.String("Ceil"), runtime.NewNativeFunc(m.ctx, "math.Ceil", m.math_Ceil))
-		m.ob.Set(runtime.String("Cos"), runtime.NewNativeFunc(m.ctx, "math.Cos", m.math_Cos))
-		m.ob.Set(runtime.String("Cosh"), runtime.NewNativeFunc(m.ctx, "math.Cosh", m.math_Cosh))
-		m.ob.Set(runtime.String("Exp"), runtime.NewNativeFunc(m.ctx, "math.Exp", m.math_Exp))
-		m.ob.Set(runtime.String("Floor"), runtime.NewNativeFunc(m.ctx, "math.Floor", m.math_Floor))
-		m.ob.Set(runtime.String("Inf"), runtime.NewNativeFunc(m.ctx, "math.Inf", m.math_Inf))
-		m.ob.Set(runtime.String("IsInf"), runtime.NewNativeFunc(m.ctx, "math.IsInf", m.math_IsInf))
-		m.ob.Set(runtime.String("IsNaN"), runtime.NewNativeFunc(m.ctx, "math.IsNaN", m.math_IsNaN))
-		m.ob.Set(runtime.String("Max"), runtime.NewNativeFunc(m.ctx, "math.Max", m.math_Max))
-		m.ob.Set(runtime.String("Min"), runtime.NewNativeFunc(m.ctx, "math.Min", m.math_Min))
-		m.ob.Set(runtime.String("NaN"), runtime.NewNativeFunc(m.ctx, "math.NaN", m.math_NaN))
-		m.ob.Set(runtime.String("Pow"), runtime.NewNativeFunc(m.ctx, "math.Pow", m.math_Pow))
-		m.ob.Set(runtime.String("Sin"), runtime.NewNativeFunc(m.ctx, "math.Sin", m.math_Sin))
-		m.ob.Set(runtime.String("Sinh"), runtime.NewNativeFunc(m.ctx, "math.Sinh", m.math_Sinh))
-		m.ob.Set(runtime.String("Sqrt"), runtime.NewNativeFunc(m.ctx, "math.Sqrt", m.math_Sqrt))
-		m.ob.Set(runtime.String("Tan"), runtime.NewNativeFunc(m.ctx, "math.Tan", m.math_Tan))
-		m.ob.Set(runtime.String("Tanh"), runtime.NewNativeFunc(m.ctx, "math.Tanh", m.math_Tanh))
-		m.ob.Set(runtime.String("RandSeed"), runtime.NewNativeFunc(m.ctx, "math.RandSeed", m.math_RandSeed))
-		m.ob.Set(runtime.String("Rand"), runtime.NewNativeFunc(m.ctx, "math.Rand", m.math_Rand))
+		m.ob.Set(runtime.String("Abs"), runtime.NewNativeFunc(m.ktx, "math.Abs", m.math_Abs))
+		m.ob.Set(runtime.String("Acos"), runtime.NewNativeFunc(m.ktx, "math.Acos", m.math_Acos))
+		m.ob.Set(runtime.String("Acosh"), runtime.NewNativeFunc(m.ktx, "math.Acosh", m.math_Acosh))
+		m.ob.Set(runtime.String("Asin"), runtime.NewNativeFunc(m.ktx, "math.Asin", m.math_Asin))
+		m.ob.Set(runtime.String("Asinh"), runtime.NewNativeFunc(m.ktx, "math.Asinh", m.math_Asinh))
+		m.ob.Set(runtime.String("Atan"), runtime.NewNativeFunc(m.ktx, "math.Atan", m.math_Atan))
+		m.ob.Set(runtime.String("Atan2"), runtime.NewNativeFunc(m.ktx, "math.Atan2", m.math_Atan2))
+		m.ob.Set(runtime.String("Atanh"), runtime.NewNativeFunc(m.ktx, "math.Atanh", m.math_Atanh))
+		m.ob.Set(runtime.String("Ceil"), runtime.NewNativeFunc(m.ktx, "math.Ceil", m.math_Ceil))
+		m.ob.Set(runtime.String("Cos"), runtime.NewNativeFunc(m.ktx, "math.Cos", m.math_Cos))
+		m.ob.Set(runtime.String("Cosh"), runtime.NewNativeFunc(m.ktx, "math.Cosh", m.math_Cosh))
+		m.ob.Set(runtime.String("Exp"), runtime.NewNativeFunc(m.ktx, "math.Exp", m.math_Exp))
+		m.ob.Set(runtime.String("Floor"), runtime.NewNativeFunc(m.ktx, "math.Floor", m.math_Floor))
+		m.ob.Set(runtime.String("Inf"), runtime.NewNativeFunc(m.ktx, "math.Inf", m.math_Inf))
+		m.ob.Set(runtime.String("IsInf"), runtime.NewNativeFunc(m.ktx, "math.IsInf", m.math_IsInf))
+		m.ob.Set(runtime.String("IsNaN"), runtime.NewNativeFunc(m.ktx, "math.IsNaN", m.math_IsNaN))
+		m.ob.Set(runtime.String("Max"), runtime.NewNativeFunc(m.ktx, "math.Max", m.math_Max))
+		m.ob.Set(runtime.String("Min"), runtime.NewNativeFunc(m.ktx, "math.Min", m.math_Min))
+		m.ob.Set(runtime.String("NaN"), runtime.NewNativeFunc(m.ktx, "math.NaN", m.math_NaN))
+		m.ob.Set(runtime.String("Pow"), runtime.NewNativeFunc(m.ktx, "math.Pow", m.math_Pow))
+		m.ob.Set(runtime.String("Sin"), runtime.NewNativeFunc(m.ktx, "math.Sin", m.math_Sin))
+		m.ob.Set(runtime.String("Sinh"), runtime.NewNativeFunc(m.ktx, "math.Sinh", m.math_Sinh))
+		m.ob.Set(runtime.String("Sqrt"), runtime.NewNativeFunc(m.ktx, "math.Sqrt", m.math_Sqrt))
+		m.ob.Set(runtime.String("Tan"), runtime.NewNativeFunc(m.ktx, "math.Tan", m.math_Tan))
+		m.ob.Set(runtime.String("Tanh"), runtime.NewNativeFunc(m.ktx, "math.Tanh", m.math_Tanh))
+		m.ob.Set(runtime.String("RandSeed"), runtime.NewNativeFunc(m.ktx, "math.RandSeed", m.math_RandSeed))
+		m.ob.Set(runtime.String("Rand"), runtime.NewNativeFunc(m.ktx, "math.Rand", m.math_Rand))
 	}
 	return m.ob, nil
 }
 
-func (m *MathMod) SetCtx(ctx *runtime.Ctx) {
-	m.ctx = ctx
+func (m *MathMod) SetKtx(ktx *runtime.Kontext) {
+	m.ktx = ktx
 }
 
 func (m *MathMod) math_Abs(args ...runtime.Val) runtime.Val {

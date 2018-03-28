@@ -4,13 +4,13 @@ import (
 	"testing"
 	"time"
 
-	"github.com/PuerkitoBio/agora/runtime"
+	"github.com/bobg/agora/runtime"
 )
 
 func TestTimeConv(t *testing.T) {
-	ctx := runtime.NewCtx(nil, nil)
+	ktx := runtime.NewKtx(nil, nil)
 	tm := new(TimeMod)
-	tm.SetCtx(ctx)
+	tm.SetKtx(ktx)
 	nw := time.Now().UTC()
 	n := tm.time_Date(runtime.Number(nw.Year()),
 		runtime.Number(nw.Month()),
@@ -39,9 +39,9 @@ func TestTimeConv(t *testing.T) {
 }
 
 func TestTimeSleep(t *testing.T) {
-	ctx := runtime.NewCtx(nil, nil)
+	ktx := runtime.NewKtx(nil, nil)
 	tm := new(TimeMod)
-	tm.SetCtx(ctx)
+	tm.SetKtx(ktx)
 	n := time.Now()
 	tm.time_Sleep(runtime.Number(100))
 	if diff := time.Now().Sub(n); diff < 100*time.Millisecond {
@@ -50,9 +50,9 @@ func TestTimeSleep(t *testing.T) {
 }
 
 func TestTimeNow(t *testing.T) {
-	ctx := runtime.NewCtx(nil, nil)
+	ktx := runtime.NewKtx(nil, nil)
 	tm := new(TimeMod)
-	tm.SetCtx(ctx)
+	tm.SetKtx(ktx)
 	exp := time.Now()
 	ret := tm.time_Now()
 	ob := ret.(runtime.Object)
@@ -148,9 +148,9 @@ func TestTimeDate(t *testing.T) {
 			exp: time.Date(1975, 2, 3, 4, 5, 6, 7, time.Local),
 		},
 	}
-	ctx := runtime.NewCtx(nil, nil)
+	ktx := runtime.NewKtx(nil, nil)
 	tm := new(TimeMod)
-	tm.SetCtx(ctx)
+	tm.SetKtx(ktx)
 	for i, c := range cases {
 		ret := tm.time_Date(c.args...)
 		ob := ret.(runtime.Object)

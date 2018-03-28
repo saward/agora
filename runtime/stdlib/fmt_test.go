@@ -5,11 +5,11 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/PuerkitoBio/agora/runtime"
+	"github.com/bobg/agora/runtime"
 )
 
 func TestFmtPrint(t *testing.T) {
-	ctx := runtime.NewCtx(nil, nil)
+	ktx := runtime.NewKtx(nil, nil)
 
 	cases := []struct {
 		src   []runtime.Val
@@ -34,7 +34,7 @@ func TestFmtPrint(t *testing.T) {
 		},
 		3: {
 			src: []runtime.Val{runtime.String("func:"),
-				runtime.NewNativeFunc(ctx, "", func(args ...runtime.Val) runtime.Val { return runtime.Nil })},
+				runtime.NewNativeFunc(ktx, "", func(args ...runtime.Val) runtime.Val { return runtime.Nil })},
 			exp:   "func:<func  (",
 			expln: "func: <func  (",
 			start: true,
@@ -46,9 +46,9 @@ func TestFmtPrint(t *testing.T) {
 	}
 
 	fm := new(FmtMod)
-	fm.SetCtx(ctx)
+	fm.SetKtx(ktx)
 	buf := bytes.NewBuffer(nil)
-	ctx.Stdout = buf
+	ktx.Stdout = buf
 	for i, c := range cases {
 		for j := 0; j < 2; j++ {
 			var res runtime.Val
@@ -75,13 +75,13 @@ func TestFmtPrint(t *testing.T) {
 }
 
 func TestFmtScanln(t *testing.T) {
-	ctx := runtime.NewCtx(nil, nil)
+	ktx := runtime.NewKtx(nil, nil)
 	buf := bytes.NewBuffer([]byte(`This is
 two lines
 `))
-	ctx.Stdin = buf
+	ktx.Stdin = buf
 	fm := new(FmtMod)
-	fm.SetCtx(ctx)
+	fm.SetKtx(ktx)
 	ret := fm.fmt_Scanln()
 	if ret.String() != "This is" {
 		t.Errorf("expected line 1 to be 'This is', got '%s'", ret)
@@ -89,11 +89,11 @@ two lines
 }
 
 func TestFmtScanint(t *testing.T) {
-	ctx := runtime.NewCtx(nil, nil)
+	ktx := runtime.NewKtx(nil, nil)
 	buf := bytes.NewBuffer([]byte("12\n"))
-	ctx.Stdin = buf
+	ktx.Stdin = buf
 	fm := new(FmtMod)
-	fm.SetCtx(ctx)
+	fm.SetKtx(ktx)
 	ret := fm.fmt_Scanint()
 	if ret.Int() != 12 {
 		t.Errorf("expected 12, got %d", ret.Int())

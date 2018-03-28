@@ -3,13 +3,13 @@ package stdlib
 import (
 	"time"
 
-	"github.com/PuerkitoBio/agora/runtime"
+	"github.com/bobg/agora/runtime"
 )
 
 // The time module, as documented in
-// https://github.com/PuerkitoBio/agora/wiki/Standard-library
+// https://github.com/bobg/agora/wiki/Standard-library
 type TimeMod struct {
-	ctx *runtime.Ctx
+	ktx *runtime.Kontext
 	ob  runtime.Object
 }
 
@@ -22,15 +22,15 @@ func (t *TimeMod) Run(_ ...runtime.Val) (v runtime.Val, err error) {
 	if t.ob == nil {
 		// Prepare the object
 		t.ob = runtime.NewObject()
-		t.ob.Set(runtime.String("Date"), runtime.NewNativeFunc(t.ctx, "time.Date", t.time_Date))
-		t.ob.Set(runtime.String("Now"), runtime.NewNativeFunc(t.ctx, "time.Now", t.time_Now))
-		t.ob.Set(runtime.String("Sleep"), runtime.NewNativeFunc(t.ctx, "time.Sleep", t.time_Sleep))
+		t.ob.Set(runtime.String("Date"), runtime.NewNativeFunc(t.ktx, "time.Date", t.time_Date))
+		t.ob.Set(runtime.String("Now"), runtime.NewNativeFunc(t.ktx, "time.Now", t.time_Now))
+		t.ob.Set(runtime.String("Sleep"), runtime.NewNativeFunc(t.ktx, "time.Sleep", t.time_Sleep))
 	}
 	return t.ob, nil
 }
 
-func (t *TimeMod) SetCtx(c *runtime.Ctx) {
-	t.ctx = c
+func (t *TimeMod) SetKtx(c *runtime.Kontext) {
+	t.ktx = c
 }
 
 func (t *TimeMod) time_Sleep(args ...runtime.Val) runtime.Val {
@@ -49,10 +49,10 @@ func (t *TimeMod) newTime(tm time.Time) runtime.Val {
 		runtime.NewObject(),
 		tm,
 	}
-	ob.Set(runtime.String("__int"), runtime.NewNativeFunc(t.ctx, "time._time.__int", func(args ...runtime.Val) runtime.Val {
+	ob.Set(runtime.String("__int"), runtime.NewNativeFunc(t.ktx, "time._time.__int", func(args ...runtime.Val) runtime.Val {
 		return runtime.Number(ob.t.Unix())
 	}))
-	ob.Set(runtime.String("__string"), runtime.NewNativeFunc(t.ctx, "time._time.__string", func(args ...runtime.Val) runtime.Val {
+	ob.Set(runtime.String("__string"), runtime.NewNativeFunc(t.ktx, "time._time.__string", func(args ...runtime.Val) runtime.Val {
 		return runtime.String(ob.t.Format(time.RFC3339))
 	}))
 	ob.Set(runtime.String("Year"), runtime.Number(tm.Year()))

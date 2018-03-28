@@ -6,7 +6,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/PuerkitoBio/agora/bytecode"
+	"github.com/bobg/agora/bytecode"
 )
 
 // Error raised when a module has no function defined.
@@ -32,7 +32,7 @@ type Module interface {
 // native Go modules.
 type NativeModule interface {
 	Module
-	SetCtx(*Ctx)
+	SetKtx(*Kontext)
 }
 
 // An agora module holds its ID, its function table, and the value it returned.
@@ -44,7 +44,7 @@ type agoraModule struct {
 
 // Create a new agora module from the specified bytecode file and for the specified
 // execution context.
-func newAgoraModule(f *bytecode.File, c *Ctx) *agoraModule {
+func newAgoraModule(f *bytecode.File, c *Kontext) *agoraModule {
 	m := &agoraModule{
 		id: f.Name,
 	}
@@ -93,8 +93,8 @@ func (m *agoraModule) Run(args ...Val) (v Val, err error) {
 	// Do not re-run a module if it has already been imported. Use the cached value.
 	if m.v == nil {
 		fn := m.fns[0]
-		fn.ctx.pushModule(m.ID())
-		defer fn.ctx.popModule(m.ID())
+		fn.ktx.pushModule(m.ID())
+		defer fn.ktx.popModule(m.ID())
 		fv := newAgoraFuncVal(fn, nil)
 		m.v = fv.Call(nil, args...)
 	}
@@ -144,9 +144,9 @@ var (
 // 2- .agoraa (agora assembly code)
 // 3- .agora  (agora source code)
 //
-// TODO : This doesn't work, the Ctx has a single compiler, that may
+// TODO : This doesn't work, the Ktx has a single compiler, that may
 // compile assembly or source, but not both. The Resolver should look
-// for compiled bytecode or the same source code as the initial Ctx.Load.
+// for compiled bytecode or the same source code as the initial Ktx.Load.
 func (f FileResolver) Resolve(id string) (io.Reader, error) {
 	var nm string
 	if filepath.IsAbs(id) {

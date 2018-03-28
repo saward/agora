@@ -12,9 +12,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/PuerkitoBio/agora/compiler"
-	"github.com/PuerkitoBio/agora/runtime"
-	"github.com/PuerkitoBio/agora/runtime/stdlib"
+	"github.com/bobg/agora/compiler"
+	"github.com/bobg/agora/runtime"
+	"github.com/bobg/agora/runtime/stdlib"
 )
 
 // This test runs all source files in ../testdata/src/*.agora and checks if
@@ -101,19 +101,19 @@ func (t *testResolver) Resolve(id string) (io.Reader, error) {
 func runAndAssertFile(t *testing.T, id string, r io.Reader, m map[string]string) {
 	// Use the custom test resolver to return the reader
 	buf := bytes.NewBuffer(nil)
-	ctx := runtime.NewCtx(&testResolver{
+	ktx := runtime.NewKtx(&testResolver{
 		r,
 		new(runtime.FileResolver),
 	}, new(compiler.Compiler))
-	ctx.Stdout = buf
-	ctx.RegisterNativeModule(new(stdlib.FilepathMod))
-	ctx.RegisterNativeModule(new(stdlib.FmtMod))
-	ctx.RegisterNativeModule(new(stdlib.MathMod))
-	ctx.RegisterNativeModule(new(stdlib.OsMod))
-	ctx.RegisterNativeModule(new(stdlib.StringsMod))
-	ctx.RegisterNativeModule(new(stdlib.TimeMod))
+	ktx.Stdout = buf
+	ktx.RegisterNativeModule(new(stdlib.FilepathMod))
+	ktx.RegisterNativeModule(new(stdlib.FmtMod))
+	ktx.RegisterNativeModule(new(stdlib.MathMod))
+	ktx.RegisterNativeModule(new(stdlib.OsMod))
+	ktx.RegisterNativeModule(new(stdlib.StringsMod))
+	ktx.RegisterNativeModule(new(stdlib.TimeMod))
 
-	mod, err := ctx.Load(id)
+	mod, err := ktx.Load(id)
 	var ret runtime.Val
 	if err == nil {
 		var args []runtime.Val

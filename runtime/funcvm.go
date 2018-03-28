@@ -8,8 +8,8 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/PuerkitoBio/agora/bytecode"
 	"github.com/PuerkitoBio/gocoro"
+	"github.com/bobg/agora/bytecode"
 )
 
 // An agoraFuncVM is a runnable instance of a function value. It holds the virtual machine
@@ -39,7 +39,7 @@ func newFuncVM(fv *agoraFuncVal) *agoraFuncVM {
 	return &agoraFuncVM{
 		val:   fv,
 		proto: p,
-		debug: p.ctx.Debug,
+		debug: p.ktx.Debug,
 		stack: make([]Val, 0, p.stackSz),
 		vars:  make(map[string]Val, len(p.lTable)),
 	}
@@ -50,7 +50,7 @@ func (f *agoraFuncVM) push(v Val) {
 	// Stack has to grow as needed, StackSz doesn't take into account the loops
 	if f.sp == len(f.stack) {
 		if f.debug && f.sp == cap(f.stack) {
-			fmt.Fprintf(f.proto.ctx.Stdout, "DEBUG expanding stack of func %s, current size: %d\n", f.val.name, len(f.stack))
+			fmt.Fprintf(f.proto.ktx.Stdout, "DEBUG expanding stack of func %s, current size: %d\n", f.val.name, len(f.stack))
 		}
 		f.stack = append(f.stack, v)
 	} else {
@@ -75,7 +75,7 @@ func (f *agoraFuncVM) getVal(flg bytecode.Flag, ix uint64) Val {
 	case bytecode.FLG_V:
 		// Fail if variable cannot be found
 		varNm := f.proto.kTable[ix].String()
-		v, ok := f.proto.ctx.getVar(varNm, f)
+		v, ok := f.proto.ktx.getVar(varNm, f)
 		if !ok {
 			panic("variable not found: " + varNm)
 		}
@@ -297,7 +297,7 @@ func (vm *agoraFuncVM) pushRange(args ...Val) {
 	}
 	if vm.rsp == len(vm.rstack) {
 		if vm.debug && vm.rsp == cap(vm.rstack) {
-			fmt.Fprintf(vm.proto.ctx.Stdout, "DEBUG expanding range stack of func %s, current size: %d\n", vm.val.name, len(vm.rstack))
+			fmt.Fprintf(vm.proto.ktx.Stdout, "DEBUG expanding range stack of func %s, current size: %d\n", vm.val.name, len(vm.rstack))
 		}
 		vm.rstack = append(vm.rstack, coro)
 	} else {
@@ -330,8 +330,8 @@ func (f *agoraFuncVM) run(args ...Val) Val {
 	}()
 
 	// Keep reference to arithmetic and comparer
-	arith := f.proto.ctx.Arithmetic
-	cmp := f.proto.ctx.Comparer
+	arith := f.proto.ktx.Arithmetic
+	cmp := f.proto.ktx.Comparer
 
 	// If the program counter is 0, this is an initial run, not a resume as
 	// a coroutine.
@@ -383,7 +383,7 @@ func (f *agoraFuncVM) run(args ...Val) Val {
 			f.push(f.getVal(flg, ix))
 
 		case bytecode.OP_POP:
-			if nm, v := f.proto.kTable[ix].String(), f.pop(); !f.proto.ctx.setVar(nm, v, f) {
+			if nm, v := f.proto.kTable[ix].String(), f.pop(); !f.proto.ktx.setVar(nm, v, f) {
 				// Not found anywhere, panic
 				panic("unknown variable: " + nm)
 			}
@@ -550,7 +550,7 @@ func (f *agoraFuncVM) run(args ...Val) Val {
 		case bytecode.OP_DUMP:
 			if f.debug {
 				// Dumps `ix` number of stack traces
-				f.proto.ctx.dump(int(ix))
+				f.proto.ktx.dump(int(ix))
 			}
 
 		default:

@@ -5,7 +5,7 @@ import (
 	"io"
 	"os"
 
-	"github.com/PuerkitoBio/agora/bytecode"
+	"github.com/bobg/agora/bytecode"
 )
 
 type (
@@ -47,13 +47,13 @@ type frame struct {
 	fvm *agoraFuncVM
 }
 
-// A Ctx represents the execution context. It is self-contained, share-nothing
+// A Kontext represents the execution context. It is self-contained, share-nothing
 // with other contexts. An execution context is *not* thread-safe, it should
-// not be used concurrently. However, different instances of Ctx can be run
+// not be used concurrently. However, different instances of Kontext can be run
 // concurrently, provided their components - Compiler, Resolver, etc. - are
 // distinct instances too or do not rely on shared state or do so in a
 // thread-safe way.
-type Ctx struct {
+type Kontext struct {
 	// Public fields
 	Stdout     io.ReadWriter  // The standard streams
 	Stdin      io.ReadWriter  // ...
@@ -74,10 +74,10 @@ type Ctx struct {
 	builtin     Object
 }
 
-// NewCtx returns a new execution context, using the provided module resolver
+// NewKtx returns a new execution context, using the provided module resolver
 // and compiler.
-func NewCtx(resolver ModuleResolver, comp Compiler) *Ctx {
-	c := &Ctx{
+func NewKtx(resolver ModuleResolver, comp Compiler) *Kontext {
+	c := &Kontext{
 		Stdout:      os.Stdout,
 		Stdin:       os.Stdin,
 		Stderr:      os.Stderr,
@@ -90,7 +90,7 @@ func NewCtx(resolver ModuleResolver, comp Compiler) *Ctx {
 	}
 	// Automatically add the built-in functions
 	b := new(builtinMod)
-	b.SetCtx(c)
+	b.SetKtx(c)
 	if v, err := b.Run(); err != nil {
 		panic("error loading agora builtin module: " + err.Error())
 	} else {
@@ -106,7 +106,7 @@ func NewCtx(resolver ModuleResolver, comp Compiler) *Ctx {
 // following:
 //
 // * If id is empty string, return error.
-// * If module is cached (ctx.loadedMods), return the Module, done.
+// * If module is cached (ktx.loadedMods), return the Module, done.
 // * If module is not cached, call ModuleResolver.Resolve(id string) (io.Reader, error)
 // * If Resolve returns an error, return nil, error, done.
 // * If file is already bytecode, just load it into memory using a decoder
@@ -116,7 +116,7 @@ func NewCtx(resolver ModuleResolver, comp Compiler) *Ctx {
 // * Create module from *bytecode.File
 // * Cache module and return, do NOT execute the module.
 //
-func (c *Ctx) Load(id string) (Module, error) {
+func (c *Kontext) Load(id string) (Module, error) {
 	if id == "" {
 		return nil, NewModuleNotFoundError(id)
 	}
@@ -154,13 +154,13 @@ func (c *Ctx) Load(id string) (Module, error) {
 
 // RegisterNativeModule adds the provided native module to the list of loaded and cached
 // modules in this execution context (replacing any other module with the same ID).
-func (c *Ctx) RegisterNativeModule(m NativeModule) {
-	m.SetCtx(c)
+func (c *Kontext) RegisterNativeModule(m NativeModule) {
+	m.SetKtx(c)
 	c.loadedMods[m.ID()] = m
 }
 
 // Mark the specified module as currently executing
-func (c *Ctx) pushModule(id string) {
+func (c *Kontext) pushModule(id string) {
 	if c.loadingMods[id] {
 		panic(NewCyclicDependencyError(id))
 	}
@@ -168,16 +168,16 @@ func (c *Ctx) pushModule(id string) {
 }
 
 // Mark the specified module as no longer executing
-func (c *Ctx) popModule(id string) {
+func (c *Kontext) popModule(id string) {
 	delete(c.loadingMods, id)
 }
 
 // Push a function onto the frame stack.
-func (c *Ctx) pushFn(f Func, fvm *agoraFuncVM) {
+func (c *Kontext) pushFn(f Func, fvm *agoraFuncVM) {
 	// Stack has to grow as needed
 	if c.frmsp == len(c.frames) {
 		if c.Debug && c.frmsp == cap(c.frames) {
-			fmt.Fprintf(c.Stdout, "DEBUG expanding frames of ctx, current size: %d\n", len(c.frames))
+			fmt.Fprintf(c.Stdout, "DEBUG expanding frames of ktx, current size: %d\n", len(c.frames))
 		}
 		c.frames = append(c.frames, &frame{f, fvm})
 	} else {
@@ -187,13 +187,13 @@ func (c *Ctx) pushFn(f Func, fvm *agoraFuncVM) {
 }
 
 // Pop the top function from the frame stack.
-func (c *Ctx) popFn() {
+func (c *Kontext) popFn() {
 	c.frmsp--
 	c.frames[c.frmsp] = nil // free this reference for gc
 }
 
 // IsRunning returns true if the specified function is currently executing.
-func (c *Ctx) IsRunning(f Func) bool {
+func (c *Kontext) IsRunning(f Func) bool {
 	for i := c.frmsp - 1; i >= 0; i-- {
 		if c.frames[i].f == f {
 			return true
@@ -204,7 +204,7 @@ func (c *Ctx) IsRunning(f Func) bool {
 
 // Get the variable identified by name, looking up the lexical scope stack and ultimately the
 // built-ins.
-func (c *Ctx) getVar(nm string, fvm *agoraFuncVM) (Val, bool) {
+func (c *Kontext) getVar(nm string, fvm *agoraFuncVM) (Val, bool) {
 	// First look in locals
 	if v, ok := fvm.vars[nm]; ok {
 		return v, true
@@ -223,7 +223,7 @@ func (c *Ctx) getVar(nm string, fvm *agoraFuncVM) (Val, bool) {
 
 // Set the value of the variable identified by the provided name, looking up the
 // frame stack if necessary. Returns true if the variable was found.
-func (c *Ctx) setVar(nm string, v Val, fvm *agoraFuncVM) bool {
+func (c *Kontext) setVar(nm string, v Val, fvm *agoraFuncVM) bool {
 	// First attempt to set as local var
 	if _, ok := fvm.vars[nm]; ok {
 		fvm.vars[nm] = v
@@ -240,7 +240,7 @@ func (c *Ctx) setVar(nm string, v Val, fvm *agoraFuncVM) bool {
 }
 
 // Pretty-print the execution context, up to n number of frames.
-func (c *Ctx) dump(n int) {
+func (c *Kontext) dump(n int) {
 	if n < 0 {
 		return
 	}

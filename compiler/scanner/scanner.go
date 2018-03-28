@@ -15,7 +15,7 @@ import (
 	"unicode"
 	"unicode/utf8"
 
-	"github.com/PuerkitoBio/agora/compiler/token"
+	"github.com/bobg/agora/compiler/token"
 )
 
 // An ErrorHandler may be provided to Scanner.Init. If a syntax error is

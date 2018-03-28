@@ -7,8 +7,8 @@ package parser
 import (
 	"fmt"
 
-	"github.com/PuerkitoBio/agora/compiler/scanner"
-	"github.com/PuerkitoBio/agora/compiler/token"
+	"github.com/bobg/agora/compiler/scanner"
+	"github.com/bobg/agora/compiler/token"
 )
 
 const (

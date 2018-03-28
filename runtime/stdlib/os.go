@@ -6,13 +6,13 @@ import (
 	"os"
 	"os/exec"
 
-	"github.com/PuerkitoBio/agora/runtime"
+	"github.com/bobg/agora/runtime"
 )
 
 // The os module, as documented in
-// https://github.com/PuerkitoBio/agora/wiki/Standard-library
+// https://github.com/bobg/agora/wiki/Standard-library
 type OsMod struct {
-	ctx *runtime.Ctx
+	ktx *runtime.Kontext
 	ob  runtime.Object
 }
 
@@ -30,11 +30,11 @@ func (o *OsMod) newFile(f *os.File) *file {
 		nil,
 	}
 	ob.Set(runtime.String("Name"), runtime.String(f.Name()))
-	ob.Set(runtime.String("Close"), runtime.NewNativeFunc(o.ctx, "os.File.Close", of.closeFile))
-	ob.Set(runtime.String("ReadLine"), runtime.NewNativeFunc(o.ctx, "os.File.ReadLine", of.readLine))
-	ob.Set(runtime.String("Seek"), runtime.NewNativeFunc(o.ctx, "os.File.Seek", of.seek))
-	ob.Set(runtime.String("Write"), runtime.NewNativeFunc(o.ctx, "os.File.Write", of.write))
-	ob.Set(runtime.String("WriteLine"), runtime.NewNativeFunc(o.ctx, "os.File.WriteLine", of.writeLine))
+	ob.Set(runtime.String("Close"), runtime.NewNativeFunc(o.ktx, "os.File.Close", of.closeFile))
+	ob.Set(runtime.String("ReadLine"), runtime.NewNativeFunc(o.ktx, "os.File.ReadLine", of.readLine))
+	ob.Set(runtime.String("Seek"), runtime.NewNativeFunc(o.ktx, "os.File.Seek", of.seek))
+	ob.Set(runtime.String("Write"), runtime.NewNativeFunc(o.ktx, "os.File.Write", of.write))
+	ob.Set(runtime.String("WriteLine"), runtime.NewNativeFunc(o.ktx, "os.File.WriteLine", of.writeLine))
 	return of
 }
 
@@ -109,25 +109,25 @@ func (o *OsMod) Run(_ ...runtime.Val) (v runtime.Val, err error) {
 		o.ob.Set(runtime.String("PathSeparator"), runtime.String(os.PathSeparator))
 		o.ob.Set(runtime.String("PathListSeparator"), runtime.String(os.PathListSeparator))
 		o.ob.Set(runtime.String("DevNull"), runtime.String(os.DevNull))
-		o.ob.Set(runtime.String("Exec"), runtime.NewNativeFunc(o.ctx, "os.Exec", o.os_Exec))
-		o.ob.Set(runtime.String("Exit"), runtime.NewNativeFunc(o.ctx, "os.Exit", o.os_Exit))
-		o.ob.Set(runtime.String("Getenv"), runtime.NewNativeFunc(o.ctx, "os.Getenv", o.os_Getenv))
-		o.ob.Set(runtime.String("Getwd"), runtime.NewNativeFunc(o.ctx, "os.Getwd", o.os_Getwd))
-		o.ob.Set(runtime.String("ReadFile"), runtime.NewNativeFunc(o.ctx, "os.ReadFile", o.os_ReadFile))
-		o.ob.Set(runtime.String("WriteFile"), runtime.NewNativeFunc(o.ctx, "os.WriteFile", o.os_WriteFile))
-		o.ob.Set(runtime.String("Open"), runtime.NewNativeFunc(o.ctx, "os.Open", o.os_Open))
-		o.ob.Set(runtime.String("TryOpen"), runtime.NewNativeFunc(o.ctx, "os.TryOpen", o.os_TryOpen))
-		o.ob.Set(runtime.String("Mkdir"), runtime.NewNativeFunc(o.ctx, "os.Mkdir", o.os_Mkdir))
-		o.ob.Set(runtime.String("Remove"), runtime.NewNativeFunc(o.ctx, "os.Remove", o.os_Remove))
-		o.ob.Set(runtime.String("RemoveAll"), runtime.NewNativeFunc(o.ctx, "os.RemoveAll", o.os_RemoveAll))
-		o.ob.Set(runtime.String("Rename"), runtime.NewNativeFunc(o.ctx, "os.Rename", o.os_Rename))
-		o.ob.Set(runtime.String("ReadDir"), runtime.NewNativeFunc(o.ctx, "os.ReadDir", o.os_ReadDir))
+		o.ob.Set(runtime.String("Exec"), runtime.NewNativeFunc(o.ktx, "os.Exec", o.os_Exec))
+		o.ob.Set(runtime.String("Exit"), runtime.NewNativeFunc(o.ktx, "os.Exit", o.os_Exit))
+		o.ob.Set(runtime.String("Getenv"), runtime.NewNativeFunc(o.ktx, "os.Getenv", o.os_Getenv))
+		o.ob.Set(runtime.String("Getwd"), runtime.NewNativeFunc(o.ktx, "os.Getwd", o.os_Getwd))
+		o.ob.Set(runtime.String("ReadFile"), runtime.NewNativeFunc(o.ktx, "os.ReadFile", o.os_ReadFile))
+		o.ob.Set(runtime.String("WriteFile"), runtime.NewNativeFunc(o.ktx, "os.WriteFile", o.os_WriteFile))
+		o.ob.Set(runtime.String("Open"), runtime.NewNativeFunc(o.ktx, "os.Open", o.os_Open))
+		o.ob.Set(runtime.String("TryOpen"), runtime.NewNativeFunc(o.ktx, "os.TryOpen", o.os_TryOpen))
+		o.ob.Set(runtime.String("Mkdir"), runtime.NewNativeFunc(o.ktx, "os.Mkdir", o.os_Mkdir))
+		o.ob.Set(runtime.String("Remove"), runtime.NewNativeFunc(o.ktx, "os.Remove", o.os_Remove))
+		o.ob.Set(runtime.String("RemoveAll"), runtime.NewNativeFunc(o.ktx, "os.RemoveAll", o.os_RemoveAll))
+		o.ob.Set(runtime.String("Rename"), runtime.NewNativeFunc(o.ktx, "os.Rename", o.os_Rename))
+		o.ob.Set(runtime.String("ReadDir"), runtime.NewNativeFunc(o.ktx, "os.ReadDir", o.os_ReadDir))
 	}
 	return o.ob, nil
 }
 
-func (o *OsMod) SetCtx(ctx *runtime.Ctx) {
-	o.ctx = ctx
+func (o *OsMod) SetKtx(ktx *runtime.Kontext) {
+	o.ktx = ktx
 }
 
 func (o *OsMod) os_Exit(args ...runtime.Val) runtime.Val {

@@ -5,7 +5,7 @@ import (
 )
 
 type builtinMod struct {
-	ctx *Ctx
+	ktx *Kontext
 	ob  Object
 }
 
@@ -17,28 +17,28 @@ func (b *builtinMod) Run(_ ...Val) (v Val, err error) {
 	defer PanicToError(&err)
 	if b.ob == nil {
 		b.ob = NewObject()
-		b.ob.Set(String("import"), NewNativeFunc(b.ctx, "import", b._import))
-		b.ob.Set(String("panic"), NewNativeFunc(b.ctx, "panic", b._panic))
-		b.ob.Set(String("recover"), NewNativeFunc(b.ctx, "recover", b._recover))
-		b.ob.Set(String("len"), NewNativeFunc(b.ctx, "len", b._len))
-		b.ob.Set(String("keys"), NewNativeFunc(b.ctx, "keys", b._keys))
-		b.ob.Set(String("number"), NewNativeFunc(b.ctx, "number", b._number))
-		b.ob.Set(String("string"), NewNativeFunc(b.ctx, "string", b._string))
-		b.ob.Set(String("bool"), NewNativeFunc(b.ctx, "bool", b._bool))
-		b.ob.Set(String("type"), NewNativeFunc(b.ctx, "type", b._type))
-		b.ob.Set(String("status"), NewNativeFunc(b.ctx, "status", b._status))
-		b.ob.Set(String("reset"), NewNativeFunc(b.ctx, "reset", b._reset))
+		b.ob.Set(String("import"), NewNativeFunc(b.ktx, "import", b._import))
+		b.ob.Set(String("panic"), NewNativeFunc(b.ktx, "panic", b._panic))
+		b.ob.Set(String("recover"), NewNativeFunc(b.ktx, "recover", b._recover))
+		b.ob.Set(String("len"), NewNativeFunc(b.ktx, "len", b._len))
+		b.ob.Set(String("keys"), NewNativeFunc(b.ktx, "keys", b._keys))
+		b.ob.Set(String("number"), NewNativeFunc(b.ktx, "number", b._number))
+		b.ob.Set(String("string"), NewNativeFunc(b.ktx, "string", b._string))
+		b.ob.Set(String("bool"), NewNativeFunc(b.ktx, "bool", b._bool))
+		b.ob.Set(String("type"), NewNativeFunc(b.ktx, "type", b._type))
+		b.ob.Set(String("status"), NewNativeFunc(b.ktx, "status", b._status))
+		b.ob.Set(String("reset"), NewNativeFunc(b.ktx, "reset", b._reset))
 	}
 	return b.ob, nil
 }
 
-func (b *builtinMod) SetCtx(c *Ctx) {
-	b.ctx = c
+func (b *builtinMod) SetKtx(c *Kontext) {
+	b.ktx = c
 }
 
 func (b *builtinMod) _import(args ...Val) Val {
 	ExpectAtLeastNArgs(1, args)
-	m, err := b.ctx.Load(args[0].String())
+	m, err := b.ktx.Load(args[0].String())
 	if err != nil {
 		panic(err)
 	}

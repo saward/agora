@@ -6,8 +6,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/PuerkitoBio/agora/bytecode"
-	. "github.com/PuerkitoBio/agora/bytecode/testing"
+	"github.com/bobg/agora/bytecode"
+	. "github.com/bobg/agora/bytecode/testing"
 )
 
 var (

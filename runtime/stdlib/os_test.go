@@ -6,13 +6,13 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/PuerkitoBio/agora/runtime"
+	"github.com/bobg/agora/runtime"
 )
 
 func TestOsTryOpen(t *testing.T) {
-	ctx := runtime.NewCtx(nil, nil)
+	ktx := runtime.NewKtx(nil, nil)
 	om := new(OsMod)
-	om.SetCtx(ctx)
+	om.SetKtx(ktx)
 	// With an unknown file
 	fn := "./testdata/unknown.txt"
 	ret := om.os_TryOpen(runtime.String(fn))
@@ -30,9 +30,9 @@ func TestOsTryOpen(t *testing.T) {
 }
 
 func TestOsOpen(t *testing.T) {
-	ctx := runtime.NewCtx(nil, nil)
+	ktx := runtime.NewKtx(nil, nil)
 	om := new(OsMod)
-	om.SetCtx(ctx)
+	om.SetKtx(ktx)
 	fn := "./testdata/readfile.txt"
 	f := om.os_Open(runtime.String(fn))
 	fl := f.(*file)
@@ -61,9 +61,9 @@ func TestOsOpen(t *testing.T) {
 }
 
 func TestOsWrite(t *testing.T) {
-	ctx := runtime.NewCtx(nil, nil)
+	ktx := runtime.NewKtx(nil, nil)
 	om := new(OsMod)
-	om.SetCtx(ctx)
+	om.SetKtx(ktx)
 	fn := "./testdata/write.txt"
 	f := om.os_Open(runtime.String(fn), runtime.String("w+"))
 	fl := f.(*file)
@@ -86,9 +86,9 @@ func TestOsWrite(t *testing.T) {
 }
 
 func TestOsFields(t *testing.T) {
-	ctx := runtime.NewCtx(nil, nil)
+	ktx := runtime.NewKtx(nil, nil)
 	om := new(OsMod)
-	om.SetCtx(ctx)
+	om.SetKtx(ktx)
 	ob, err := om.Run()
 	if err != nil {
 		panic(err)
@@ -119,9 +119,9 @@ func TestOsFields(t *testing.T) {
 }
 
 func TestOsExec(t *testing.T) {
-	ctx := runtime.NewCtx(nil, nil)
+	ktx := runtime.NewKtx(nil, nil)
 	om := new(OsMod)
-	om.SetCtx(ctx)
+	om.SetKtx(ktx)
 	exp := "hello"
 	ret := om.os_Exec(runtime.String("echo"), runtime.String(exp))
 	// Shell adds a \n after output
@@ -131,9 +131,9 @@ func TestOsExec(t *testing.T) {
 }
 
 func TestOsGetenv(t *testing.T) {
-	ctx := runtime.NewCtx(nil, nil)
+	ktx := runtime.NewKtx(nil, nil)
 	om := new(OsMod)
-	om.SetCtx(ctx)
+	om.SetKtx(ktx)
 	exp := "ok"
 	e := os.Setenv("TEST", exp)
 	if e != nil {
@@ -146,9 +146,9 @@ func TestOsGetenv(t *testing.T) {
 }
 
 func TestOsGetwd(t *testing.T) {
-	ctx := runtime.NewCtx(nil, nil)
+	ktx := runtime.NewKtx(nil, nil)
 	om := new(OsMod)
-	om.SetCtx(ctx)
+	om.SetKtx(ktx)
 	exp, e := os.Getwd()
 	if e != nil {
 		panic(e)
@@ -160,9 +160,9 @@ func TestOsGetwd(t *testing.T) {
 }
 
 func TestOsReadFile(t *testing.T) {
-	ctx := runtime.NewCtx(nil, nil)
+	ktx := runtime.NewKtx(nil, nil)
 	om := new(OsMod)
-	om.SetCtx(ctx)
+	om.SetKtx(ktx)
 	b, e := ioutil.ReadFile("./testdata/readfile.txt")
 	if e != nil {
 		panic(e)
@@ -193,9 +193,9 @@ func TestOsWriteFile(t *testing.T) {
 		},
 	}
 	fn := "./testdata/writefile.txt"
-	ctx := runtime.NewCtx(nil, nil)
+	ktx := runtime.NewKtx(nil, nil)
 	om := new(OsMod)
-	om.SetCtx(ctx)
+	om.SetKtx(ktx)
 	for i, c := range cases {
 		args := append([]runtime.Val{runtime.String(fn)}, c.src...)
 		ret := om.os_WriteFile(args...)
@@ -214,9 +214,9 @@ func TestOsWriteFile(t *testing.T) {
 }
 
 func TestOsMkRemRenReadDir(t *testing.T) {
-	ctx := runtime.NewCtx(nil, nil)
+	ktx := runtime.NewKtx(nil, nil)
 	om := new(OsMod)
-	om.SetCtx(ctx)
+	om.SetKtx(ktx)
 	// First create directories
 	d1, d2 := "./testdata/d1", "./testdata/d2/d3"
 	om.os_Mkdir(runtime.String(d1), runtime.String(d2))

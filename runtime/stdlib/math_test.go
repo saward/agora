@@ -5,13 +5,13 @@ import (
 	"testing"
 	"time"
 
-	"github.com/PuerkitoBio/agora/runtime"
+	"github.com/bobg/agora/runtime"
 )
 
 func TestPi(t *testing.T) {
-	ctx := runtime.NewCtx(nil, nil)
+	ktx := runtime.NewKtx(nil, nil)
 	mm := new(MathMod)
-	mm.SetCtx(ctx)
+	mm.SetKtx(ktx)
 	ob, err := mm.Run()
 	if err != nil {
 		panic(err)
@@ -24,9 +24,9 @@ func TestPi(t *testing.T) {
 }
 
 func TestMax(t *testing.T) {
-	ctx := runtime.NewCtx(nil, nil)
+	ktx := runtime.NewKtx(nil, nil)
 	mm := new(MathMod)
-	mm.SetCtx(ctx)
+	mm.SetKtx(ktx)
 
 	cases := []struct {
 		src []runtime.Val
@@ -55,9 +55,9 @@ func TestMax(t *testing.T) {
 }
 
 func TestMin(t *testing.T) {
-	ctx := runtime.NewCtx(nil, nil)
+	ktx := runtime.NewKtx(nil, nil)
 	mm := new(MathMod)
-	mm.SetCtx(ctx)
+	mm.SetKtx(ktx)
 
 	cases := []struct {
 		src []runtime.Val
@@ -86,9 +86,9 @@ func TestMin(t *testing.T) {
 }
 
 func TestRand(t *testing.T) {
-	ctx := runtime.NewCtx(nil, nil)
+	ktx := runtime.NewKtx(nil, nil)
 	mm := new(MathMod)
-	mm.SetCtx(ctx)
+	mm.SetKtx(ktx)
 
 	mm.math_RandSeed(runtime.Number(time.Now().UnixNano()))
 	// no-arg form
@@ -109,9 +109,9 @@ func TestRand(t *testing.T) {
 }
 func TestMathAbs(t *testing.T) {
 	// This is just an interface to Go's function, so just a quick simple test
-	ctx := runtime.NewCtx(nil, nil)
+	ktx := runtime.NewKtx(nil, nil)
 	mm := new(MathMod)
-	mm.SetCtx(ctx)
+	mm.SetKtx(ktx)
 	val := -3.5
 	ret := mm.math_Abs(runtime.Number(val))
 	exp := math.Abs(val)
@@ -122,9 +122,9 @@ func TestMathAbs(t *testing.T) {
 
 func TestMathAcos(t *testing.T) {
 	// This is just an interface to Go's function, so just a quick simple test
-	ctx := runtime.NewCtx(nil, nil)
+	ktx := runtime.NewKtx(nil, nil)
 	mm := new(MathMod)
-	mm.SetCtx(ctx)
+	mm.SetKtx(ktx)
 	val := 0.12
 	ret := mm.math_Acos(runtime.Number(val))
 	exp := math.Acos(val)
@@ -135,9 +135,9 @@ func TestMathAcos(t *testing.T) {
 
 func TestMathAcosh(t *testing.T) {
 	// This is just an interface to Go's function, so just a quick simple test
-	ctx := runtime.NewCtx(nil, nil)
+	ktx := runtime.NewKtx(nil, nil)
 	mm := new(MathMod)
-	mm.SetCtx(ctx)
+	mm.SetKtx(ktx)
 	val := 1.12
 	ret := mm.math_Acosh(runtime.Number(val))
 	exp := math.Acosh(val)
@@ -148,9 +148,9 @@ func TestMathAcosh(t *testing.T) {
 
 func TestMathAsin(t *testing.T) {
 	// This is just an interface to Go's function, so just a quick simple test
-	ctx := runtime.NewCtx(nil, nil)
+	ktx := runtime.NewKtx(nil, nil)
 	mm := new(MathMod)
-	mm.SetCtx(ctx)
+	mm.SetKtx(ktx)
 	val := 0.12
 	ret := mm.math_Asin(runtime.Number(val))
 	exp := math.Asin(val)
@@ -161,9 +161,9 @@ func TestMathAsin(t *testing.T) {
 
 func TestMathAsinh(t *testing.T) {
 	// This is just an interface to Go's function, so just a quick simple test
-	ctx := runtime.NewCtx(nil, nil)
+	ktx := runtime.NewKtx(nil, nil)
 	mm := new(MathMod)
-	mm.SetCtx(ctx)
+	mm.SetKtx(ktx)
 	val := 0.12
 	ret := mm.math_Asinh(runtime.Number(val))
 	exp := math.Asinh(val)
@@ -174,9 +174,9 @@ func TestMathAsinh(t *testing.T) {
 
 func TestMathAtan(t *testing.T) {
 	// This is just an interface to Go's function, so just a quick simple test
-	ctx := runtime.NewCtx(nil, nil)
+	ktx := runtime.NewKtx(nil, nil)
 	mm := new(MathMod)
-	mm.SetCtx(ctx)
+	mm.SetKtx(ktx)
 	val := 0.12
 	ret := mm.math_Atan(runtime.Number(val))
 	exp := math.Atan(val)
@@ -187,9 +187,9 @@ func TestMathAtan(t *testing.T) {
 
 func TestMathAtan2(t *testing.T) {
 	// This is just an interface to Go's function, so just a quick simple test
-	ctx := runtime.NewCtx(nil, nil)
+	ktx := runtime.NewKtx(nil, nil)
 	mm := new(MathMod)
-	mm.SetCtx(ctx)
+	mm.SetKtx(ktx)
 	val := 0.12
 	val2 := 1.12
 	ret := mm.math_Atan2(runtime.Number(val), runtime.Number(val2))
@@ -201,9 +201,9 @@ func TestMathAtan2(t *testing.T) {
 
 func TestMathAtanh(t *testing.T) {
 	// This is just an interface to Go's function, so just a quick simple test
-	ctx := runtime.NewCtx(nil, nil)
+	ktx := runtime.NewKtx(nil, nil)
 	mm := new(MathMod)
-	mm.SetCtx(ctx)
+	mm.SetKtx(ktx)
 	val := 0.12
 	ret := mm.math_Atanh(runtime.Number(val))
 	exp := math.Atanh(val)
@@ -214,9 +214,9 @@ func TestMathAtanh(t *testing.T) {
 
 func TestMathCeil(t *testing.T) {
 	// This is just an interface to Go's function, so just a quick simple test
-	ctx := runtime.NewCtx(nil, nil)
+	ktx := runtime.NewKtx(nil, nil)
 	mm := new(MathMod)
-	mm.SetCtx(ctx)
+	mm.SetKtx(ktx)
 	val := 6.12
 	ret := mm.math_Ceil(runtime.Number(val))
 	exp := math.Ceil(val)
@@ -227,9 +227,9 @@ func TestMathCeil(t *testing.T) {
 
 func TestMathCos(t *testing.T) {
 	// This is just an interface to Go's function, so just a quick simple test
-	ctx := runtime.NewCtx(nil, nil)
+	ktx := runtime.NewKtx(nil, nil)
 	mm := new(MathMod)
-	mm.SetCtx(ctx)
+	mm.SetKtx(ktx)
 	val := 0.12
 	ret := mm.math_Cos(runtime.Number(val))
 	exp := math.Cos(val)
@@ -240,9 +240,9 @@ func TestMathCos(t *testing.T) {
 
 func TestMathCosh(t *testing.T) {
 	// This is just an interface to Go's function, so just a quick simple test
-	ctx := runtime.NewCtx(nil, nil)
+	ktx := runtime.NewKtx(nil, nil)
 	mm := new(MathMod)
-	mm.SetCtx(ctx)
+	mm.SetKtx(ktx)
 	val := 0.12
 	ret := mm.math_Cosh(runtime.Number(val))
 	exp := math.Cosh(val)
@@ -253,9 +253,9 @@ func TestMathCosh(t *testing.T) {
 
 func TestMathExp(t *testing.T) {
 	// This is just an interface to Go's function, so just a quick simple test
-	ctx := runtime.NewCtx(nil, nil)
+	ktx := runtime.NewKtx(nil, nil)
 	mm := new(MathMod)
-	mm.SetCtx(ctx)
+	mm.SetKtx(ktx)
 	val := 0.12
 	ret := mm.math_Exp(runtime.Number(val))
 	exp := math.Exp(val)
@@ -266,9 +266,9 @@ func TestMathExp(t *testing.T) {
 
 func TestMathFloor(t *testing.T) {
 	// This is just an interface to Go's function, so just a quick simple test
-	ctx := runtime.NewCtx(nil, nil)
+	ktx := runtime.NewKtx(nil, nil)
 	mm := new(MathMod)
-	mm.SetCtx(ctx)
+	mm.SetKtx(ktx)
 	val := 4.12
 	ret := mm.math_Floor(runtime.Number(val))
 	exp := math.Floor(val)
@@ -279,9 +279,9 @@ func TestMathFloor(t *testing.T) {
 
 func TestMathInf(t *testing.T) {
 	// This is just an interface to Go's function, so just a quick simple test
-	ctx := runtime.NewCtx(nil, nil)
+	ktx := runtime.NewKtx(nil, nil)
 	mm := new(MathMod)
-	mm.SetCtx(ctx)
+	mm.SetKtx(ktx)
 	val := 1
 	ret := mm.math_Inf(runtime.Number(val))
 	exp := math.Inf(val)
@@ -292,9 +292,9 @@ func TestMathInf(t *testing.T) {
 
 func TestMathIsInf(t *testing.T) {
 	// This is just an interface to Go's function, so just a quick simple test
-	ctx := runtime.NewCtx(nil, nil)
+	ktx := runtime.NewKtx(nil, nil)
 	mm := new(MathMod)
-	mm.SetCtx(ctx)
+	mm.SetKtx(ktx)
 	val := 3.12
 	val2 := 1
 	ret := mm.math_IsInf(runtime.Number(val), runtime.Number(val2))
@@ -306,9 +306,9 @@ func TestMathIsInf(t *testing.T) {
 
 func TestMathIsNaN(t *testing.T) {
 	// This is just an interface to Go's function, so just a quick simple test
-	ctx := runtime.NewCtx(nil, nil)
+	ktx := runtime.NewKtx(nil, nil)
 	mm := new(MathMod)
-	mm.SetCtx(ctx)
+	mm.SetKtx(ktx)
 	val := 0.12
 	ret := mm.math_IsNaN(runtime.Number(val))
 	exp := math.IsNaN(val)
@@ -319,9 +319,9 @@ func TestMathIsNaN(t *testing.T) {
 
 func TestMathNaN(t *testing.T) {
 	// This is just an interface to Go's function, so just a quick simple test
-	ctx := runtime.NewCtx(nil, nil)
+	ktx := runtime.NewKtx(nil, nil)
 	mm := new(MathMod)
-	mm.SetCtx(ctx)
+	mm.SetKtx(ktx)
 	ret := mm.math_NaN()
 	exp := math.NaN()
 	if math.IsNaN(ret.Float()) != math.IsNaN(exp) {
@@ -331,9 +331,9 @@ func TestMathNaN(t *testing.T) {
 
 func TestMathPow(t *testing.T) {
 	// This is just an interface to Go's function, so just a quick simple test
-	ctx := runtime.NewCtx(nil, nil)
+	ktx := runtime.NewKtx(nil, nil)
 	mm := new(MathMod)
-	mm.SetCtx(ctx)
+	mm.SetKtx(ktx)
 	val := 1.12
 	val2 := 3.45
 	ret := mm.math_Pow(runtime.Number(val), runtime.Number(val2))
@@ -345,9 +345,9 @@ func TestMathPow(t *testing.T) {
 
 func TestMathSin(t *testing.T) {
 	// This is just an interface to Go's function, so just a quick simple test
-	ctx := runtime.NewCtx(nil, nil)
+	ktx := runtime.NewKtx(nil, nil)
 	mm := new(MathMod)
-	mm.SetCtx(ctx)
+	mm.SetKtx(ktx)
 	val := 1.12
 	ret := mm.math_Sin(runtime.Number(val))
 	exp := math.Sin(val)
@@ -358,9 +358,9 @@ func TestMathSin(t *testing.T) {
 
 func TestMathSinh(t *testing.T) {
 	// This is just an interface to Go's function, so just a quick simple test
-	ctx := runtime.NewCtx(nil, nil)
+	ktx := runtime.NewKtx(nil, nil)
 	mm := new(MathMod)
-	mm.SetCtx(ctx)
+	mm.SetKtx(ktx)
 	val := 1.12
 	ret := mm.math_Sinh(runtime.Number(val))
 	exp := math.Sinh(val)
@@ -371,9 +371,9 @@ func TestMathSinh(t *testing.T) {
 
 func TestMathSqrt(t *testing.T) {
 	// This is just an interface to Go's function, so just a quick simple test
-	ctx := runtime.NewCtx(nil, nil)
+	ktx := runtime.NewKtx(nil, nil)
 	mm := new(MathMod)
-	mm.SetCtx(ctx)
+	mm.SetKtx(ktx)
 	val := 1.12
 	ret := mm.math_Sqrt(runtime.Number(val))
 	exp := math.Sqrt(val)
@@ -384,9 +384,9 @@ func TestMathSqrt(t *testing.T) {
 
 func TestMathTan(t *testing.T) {
 	// This is just an interface to Go's function, so just a quick simple test
-	ctx := runtime.NewCtx(nil, nil)
+	ktx := runtime.NewKtx(nil, nil)
 	mm := new(MathMod)
-	mm.SetCtx(ctx)
+	mm.SetKtx(ktx)
 	val := 1.12
 	ret := mm.math_Tan(runtime.Number(val))
 	exp := math.Tan(val)
@@ -397,9 +397,9 @@ func TestMathTan(t *testing.T) {
 
 func TestMathTanh(t *testing.T) {
 	// This is just an interface to Go's function, so just a quick simple test
-	ctx := runtime.NewCtx(nil, nil)
+	ktx := runtime.NewKtx(nil, nil)
 	mm := new(MathMod)
-	mm.SetCtx(ctx)
+	mm.SetKtx(ktx)
 	val := 1.12
 	ret := mm.math_Tanh(runtime.Number(val))
 	exp := math.Tanh(val)

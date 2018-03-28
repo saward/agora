@@ -4,13 +4,13 @@ import (
 	"bufio"
 	"fmt"
 
-	"github.com/PuerkitoBio/agora/runtime"
+	"github.com/bobg/agora/runtime"
 )
 
 // The fmt module, as documented in
-// https://github.com/PuerkitoBio/agora/wiki/Standard-library
+// https://github.com/bobg/agora/wiki/Standard-library
 type FmtMod struct {
-	ctx *runtime.Ctx
+	ktx *runtime.Kontext
 	ob  runtime.Object
 }
 
@@ -23,16 +23,16 @@ func (f *FmtMod) Run(_ ...runtime.Val) (v runtime.Val, err error) {
 	if f.ob == nil {
 		// Prepare the object
 		f.ob = runtime.NewObject()
-		f.ob.Set(runtime.String("Print"), runtime.NewNativeFunc(f.ctx, "fmt.Print", f.fmt_Print))
-		f.ob.Set(runtime.String("Println"), runtime.NewNativeFunc(f.ctx, "fmt.Println", f.fmt_Println))
-		f.ob.Set(runtime.String("Scanln"), runtime.NewNativeFunc(f.ctx, "fmt.Scanln", f.fmt_Scanln))
-		f.ob.Set(runtime.String("Scanint"), runtime.NewNativeFunc(f.ctx, "fmt.Scanint", f.fmt_Scanint))
+		f.ob.Set(runtime.String("Print"), runtime.NewNativeFunc(f.ktx, "fmt.Print", f.fmt_Print))
+		f.ob.Set(runtime.String("Println"), runtime.NewNativeFunc(f.ktx, "fmt.Println", f.fmt_Println))
+		f.ob.Set(runtime.String("Scanln"), runtime.NewNativeFunc(f.ktx, "fmt.Scanln", f.fmt_Scanln))
+		f.ob.Set(runtime.String("Scanint"), runtime.NewNativeFunc(f.ktx, "fmt.Scanint", f.fmt_Scanint))
 	}
 	return f.ob, nil
 }
 
-func (f *FmtMod) SetCtx(c *runtime.Ctx) {
-	f.ctx = c
+func (f *FmtMod) SetKtx(c *runtime.Kontext) {
+	f.ktx = c
 }
 
 func toStringIface(args []runtime.Val) []interface{} {
@@ -49,7 +49,7 @@ func toStringIface(args []runtime.Val) []interface{} {
 
 func (f *FmtMod) fmt_Print(args ...runtime.Val) runtime.Val {
 	ifs := toStringIface(args)
-	n, err := fmt.Fprint(f.ctx.Stdout, ifs...)
+	n, err := fmt.Fprint(f.ktx.Stdout, ifs...)
 	if err != nil {
 		panic(err)
 	}
@@ -58,7 +58,7 @@ func (f *FmtMod) fmt_Print(args ...runtime.Val) runtime.Val {
 
 func (f *FmtMod) fmt_Println(args ...runtime.Val) runtime.Val {
 	ifs := toStringIface(args)
-	n, err := fmt.Fprintln(f.ctx.Stdout, ifs...)
+	n, err := fmt.Fprintln(f.ktx.Stdout, ifs...)
 	if err != nil {
 		panic(err)
 	}
@@ -71,7 +71,7 @@ func (f *FmtMod) fmt_Scanln(args ...runtime.Val) runtime.Val {
 		e    error
 		pre  bool
 	)
-	r := bufio.NewReader(f.ctx.Stdin)
+	r := bufio.NewReader(f.ktx.Stdin)
 	for l, pre, e = r.ReadLine(); pre && e == nil; l, pre, e = r.ReadLine() {
 		b = append(b, l...)
 	}
@@ -84,7 +84,7 @@ func (f *FmtMod) fmt_Scanln(args ...runtime.Val) runtime.Val {
 
 func (f *FmtMod) fmt_Scanint(args ...runtime.Val) runtime.Val {
 	var i int
-	if _, e := fmt.Fscanf(f.ctx.Stdin, "%d", &i); e != nil {
+	if _, e := fmt.Fscanf(f.ktx.Stdin, "%d", &i); e != nil {
 		panic(e)
 	}
 	return runtime.Number(i)

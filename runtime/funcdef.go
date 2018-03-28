@@ -3,7 +3,7 @@ package runtime
 import (
 	"fmt"
 
-	"github.com/PuerkitoBio/agora/bytecode"
+	"github.com/bobg/agora/bytecode"
 )
 
 // FuncFn represents the Func signature for native functions.
@@ -17,7 +17,7 @@ type Func interface {
 
 // An agoraFuncDef represents an agora function's prototype.
 type agoraFuncDef struct {
-	ctx *Ctx
+	ktx *Kontext
 	mod *agoraModule
 	// Internal fields filled by the compiler
 	name    string
@@ -28,19 +28,19 @@ type agoraFuncDef struct {
 	code    []bytecode.Instr
 }
 
-func newAgoraFuncDef(mod *agoraModule, c *Ctx) *agoraFuncDef {
+func newAgoraFuncDef(mod *agoraModule, c *Kontext) *agoraFuncDef {
 	return &agoraFuncDef{
-		ctx: c,
+		ktx: c,
 		mod: mod,
 	}
 }
 
 // NewNativeFunc returns a native function initialized with the specified context,
 // name and function implementation.
-func NewNativeFunc(ctx *Ctx, nm string, fn FuncFn) *NativeFunc {
+func NewNativeFunc(ktx *Kontext, nm string, fn FuncFn) *NativeFunc {
 	return &NativeFunc{
 		&funcVal{
-			ctx,
+			ktx,
 			nm,
 		},
 		fn,
@@ -71,7 +71,7 @@ func (n *NativeFunc) Native() interface{} {
 
 // Call executes the native function and returns its return value.
 func (n *NativeFunc) Call(_ Val, args ...Val) Val {
-	n.ctx.pushFn(n, nil)
-	defer n.ctx.popFn()
+	n.ktx.pushFn(n, nil)
+	defer n.ktx.popFn()
 	return n.fn(args...)
 }

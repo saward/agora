@@ -39,11 +39,11 @@ func (c cusType) dump() string {
 
 var (
 	// Common variables for the tests
-	ctx   = NewCtx(nil, nil)
+	ktx   = NewKtx(nil, nil)
 	ari   = defaultArithmetic{}
 	o     = NewObject()
 	oplus = NewObject()
-	fn    = NewNativeFunc(ctx, "", func(_ ...Val) Val { return Nil })
+	fn    = NewNativeFunc(ktx, "", func(_ ...Val) Val { return Nil })
 	cus   = cusType{}
 
 	// Common cases, same result regardless of operation
@@ -175,11 +175,11 @@ var (
 )
 
 func init() {
-	fRetArg := NewNativeFunc(ctx, "", func(args ...Val) Val {
+	fRetArg := NewNativeFunc(ktx, "", func(args ...Val) Val {
 		ExpectAtLeastNArgs(2, args)
 		return args[0]
 	})
-	fRetUnm := NewNativeFunc(ctx, "", func(args ...Val) Val {
+	fRetUnm := NewNativeFunc(ktx, "", func(args ...Val) Val {
 		return Number(-1)
 	})
 	oplus.Set(String("__add"), fRetArg)

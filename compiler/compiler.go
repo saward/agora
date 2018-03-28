@@ -5,13 +5,13 @@ import (
 	"io"
 	"io/ioutil"
 
-	"github.com/PuerkitoBio/agora/bytecode"
-	"github.com/PuerkitoBio/agora/compiler/emitter"
-	"github.com/PuerkitoBio/agora/compiler/parser"
+	"github.com/bobg/agora/bytecode"
+	"github.com/bobg/agora/compiler/emitter"
+	"github.com/bobg/agora/compiler/parser"
 )
 
 // A Compiler represents the source code compiler. It implements the runtime.Compiler
-// interface so that it is suitable for runtime.Ctx.
+// interface so that it is suitable for runtime.Ktx.
 type Compiler struct{}
 
 // Compile takes a module identifier and a reader, and compiles its source date

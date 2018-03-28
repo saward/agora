@@ -4,13 +4,13 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/PuerkitoBio/agora/runtime"
+	"github.com/bobg/agora/runtime"
 )
 
 func TestFilepathAbs(t *testing.T) {
-	ctx := runtime.NewCtx(nil, nil)
+	ktx := runtime.NewKtx(nil, nil)
 	fm := new(FilepathMod)
-	fm.SetCtx(ctx)
+	fm.SetKtx(ktx)
 	p := "./testdata"
 	// Abs
 	exp, e := filepath.Abs(p)
@@ -32,9 +32,9 @@ func TestFilepathAbs(t *testing.T) {
 }
 
 func TestFilepathBaseDirExt(t *testing.T) {
-	ctx := runtime.NewCtx(nil, nil)
+	ktx := runtime.NewKtx(nil, nil)
 	fm := new(FilepathMod)
-	fm.SetCtx(ctx)
+	fm.SetKtx(ktx)
 	p, e := filepath.Abs("./testdata/readfile.txt")
 	if e != nil {
 		panic(e)
@@ -60,9 +60,9 @@ func TestFilepathBaseDirExt(t *testing.T) {
 }
 
 func TestFilepathJoin(t *testing.T) {
-	ctx := runtime.NewCtx(nil, nil)
+	ktx := runtime.NewKtx(nil, nil)
 	fm := new(FilepathMod)
-	fm.SetCtx(ctx)
+	fm.SetKtx(ktx)
 	parts := []string{"./testdata", "..", "../../compiler", "test"}
 	exp := filepath.Join(parts...)
 	vals := make([]runtime.Val, len(parts))

@@ -7,8 +7,8 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/PuerkitoBio/agora/bytecode"
-	"github.com/PuerkitoBio/agora/compiler/parser"
+	"github.com/bobg/agora/bytecode"
+	"github.com/bobg/agora/compiler/parser"
 )
 
 var (

@@ -5,7 +5,7 @@ import (
 	"io"
 	"strconv"
 
-	"github.com/PuerkitoBio/agora/bytecode"
+	"github.com/bobg/agora/bytecode"
 )
 
 var (

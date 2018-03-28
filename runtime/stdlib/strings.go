@@ -5,13 +5,13 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/PuerkitoBio/agora/runtime"
+	"github.com/bobg/agora/runtime"
 )
 
 // The strings module, as documented in
-// https://github.com/PuerkitoBio/agora/wiki/Standard-library
+// https://github.com/bobg/agora/wiki/Standard-library
 type StringsMod struct {
-	ctx *runtime.Ctx
+	ktx *runtime.Kontext
 	ob  runtime.Object
 }
 
@@ -24,28 +24,28 @@ func (s *StringsMod) Run(_ ...runtime.Val) (v runtime.Val, err error) {
 	if s.ob == nil {
 		// Prepare the object
 		s.ob = runtime.NewObject()
-		s.ob.Set(runtime.String("ToLower"), runtime.NewNativeFunc(s.ctx, "strings.ToLower", s.strings_ToLower))
-		s.ob.Set(runtime.String("ToUpper"), runtime.NewNativeFunc(s.ctx, "strings.ToUpper", s.strings_ToUpper))
-		s.ob.Set(runtime.String("HasPrefix"), runtime.NewNativeFunc(s.ctx, "strings.HasPrefix", s.strings_HasPrefix))
-		s.ob.Set(runtime.String("HasSuffix"), runtime.NewNativeFunc(s.ctx, "strings.HasSuffix", s.strings_HasSuffix))
-		s.ob.Set(runtime.String("Matches"), runtime.NewNativeFunc(s.ctx, "strings.Matches", s.strings_Matches))
-		s.ob.Set(runtime.String("ByteAt"), runtime.NewNativeFunc(s.ctx, "strings.ByteAt", s.strings_ByteAt))
-		s.ob.Set(runtime.String("Concat"), runtime.NewNativeFunc(s.ctx, "strings.Concat", s.strings_Concat))
-		s.ob.Set(runtime.String("Contains"), runtime.NewNativeFunc(s.ctx, "strings.Contains", s.strings_Contains))
-		s.ob.Set(runtime.String("Index"), runtime.NewNativeFunc(s.ctx, "strings.Index", s.strings_Index))
-		s.ob.Set(runtime.String("LastIndex"), runtime.NewNativeFunc(s.ctx, "strings.LastIndex", s.strings_LastIndex))
-		s.ob.Set(runtime.String("Slice"), runtime.NewNativeFunc(s.ctx, "strings.Slice", s.strings_Slice))
-		s.ob.Set(runtime.String("Split"), runtime.NewNativeFunc(s.ctx, "strings.Split", s.strings_Split))
-		s.ob.Set(runtime.String("Join"), runtime.NewNativeFunc(s.ctx, "strings.Join", s.strings_Join))
-		s.ob.Set(runtime.String("Replace"), runtime.NewNativeFunc(s.ctx, "strings.Replace", s.strings_Replace))
-		s.ob.Set(runtime.String("Repeat"), runtime.NewNativeFunc(s.ctx, "strings.Repeat", s.strings_Repeat))
-		s.ob.Set(runtime.String("Trim"), runtime.NewNativeFunc(s.ctx, "strings.Trim", s.strings_Trim))
+		s.ob.Set(runtime.String("ToLower"), runtime.NewNativeFunc(s.ktx, "strings.ToLower", s.strings_ToLower))
+		s.ob.Set(runtime.String("ToUpper"), runtime.NewNativeFunc(s.ktx, "strings.ToUpper", s.strings_ToUpper))
+		s.ob.Set(runtime.String("HasPrefix"), runtime.NewNativeFunc(s.ktx, "strings.HasPrefix", s.strings_HasPrefix))
+		s.ob.Set(runtime.String("HasSuffix"), runtime.NewNativeFunc(s.ktx, "strings.HasSuffix", s.strings_HasSuffix))
+		s.ob.Set(runtime.String("Matches"), runtime.NewNativeFunc(s.ktx, "strings.Matches", s.strings_Matches))
+		s.ob.Set(runtime.String("ByteAt"), runtime.NewNativeFunc(s.ktx, "strings.ByteAt", s.strings_ByteAt))
+		s.ob.Set(runtime.String("Concat"), runtime.NewNativeFunc(s.ktx, "strings.Concat", s.strings_Concat))
+		s.ob.Set(runtime.String("Contains"), runtime.NewNativeFunc(s.ktx, "strings.Contains", s.strings_Contains))
+		s.ob.Set(runtime.String("Index"), runtime.NewNativeFunc(s.ktx, "strings.Index", s.strings_Index))
+		s.ob.Set(runtime.String("LastIndex"), runtime.NewNativeFunc(s.ktx, "strings.LastIndex", s.strings_LastIndex))
+		s.ob.Set(runtime.String("Slice"), runtime.NewNativeFunc(s.ktx, "strings.Slice", s.strings_Slice))
+		s.ob.Set(runtime.String("Split"), runtime.NewNativeFunc(s.ktx, "strings.Split", s.strings_Split))
+		s.ob.Set(runtime.String("Join"), runtime.NewNativeFunc(s.ktx, "strings.Join", s.strings_Join))
+		s.ob.Set(runtime.String("Replace"), runtime.NewNativeFunc(s.ktx, "strings.Replace", s.strings_Replace))
+		s.ob.Set(runtime.String("Repeat"), runtime.NewNativeFunc(s.ktx, "strings.Repeat", s.strings_Repeat))
+		s.ob.Set(runtime.String("Trim"), runtime.NewNativeFunc(s.ktx, "strings.Trim", s.strings_Trim))
 	}
 	return s.ob, nil
 }
 
-func (s *StringsMod) SetCtx(c *runtime.Ctx) {
-	s.ctx = c
+func (s *StringsMod) SetKtx(c *runtime.Kontext) {
+	s.ktx = c
 }
 
 // Converts strings to uppercase, concatenating all strings.

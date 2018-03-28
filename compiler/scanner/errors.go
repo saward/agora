@@ -10,7 +10,7 @@ import (
 	"io"
 	"sort"
 
-	"github.com/PuerkitoBio/agora/compiler/token"
+	"github.com/bobg/agora/compiler/token"
 )
 
 // In an ErrorList, an error is represented by an *Error.
