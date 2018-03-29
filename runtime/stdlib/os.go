@@ -2,6 +2,7 @@ package stdlib
 
 import (
 	"bufio"
+	"context"
 	"io/ioutil"
 	"os"
 	"os/exec"
@@ -38,7 +39,7 @@ func (o *OsMod) newFile(f *os.File) *file {
 	return of
 }
 
-func (of *file) closeFile(args ...runtime.Val) runtime.Val {
+func (of *file) closeFile(ctx context.Context, args ...runtime.Val) runtime.Val {
 	e := of.f.Close()
 	if e != nil {
 		panic(e)
@@ -46,7 +47,7 @@ func (of *file) closeFile(args ...runtime.Val) runtime.Val {
 	return runtime.Nil
 }
 
-func (of *file) readLine(args ...runtime.Val) runtime.Val {
+func (of *file) readLine(ctx context.Context, args ...runtime.Val) runtime.Val {
 	if of.s == nil {
 		of.s = bufio.NewScanner(of.f)
 	}
@@ -59,14 +60,14 @@ func (of *file) readLine(args ...runtime.Val) runtime.Val {
 	return runtime.Nil
 }
 
-func (of *file) seek(args ...runtime.Val) runtime.Val {
+func (of *file) seek(ctx context.Context, args ...runtime.Val) runtime.Val {
 	off := int64(0)
 	if len(args) > 0 {
-		off = args[0].Int()
+		off = args[0].Int(ctx)
 	}
 	rel := 0
 	if len(args) > 1 {
-		rel = int(args[1].Int())
+		rel = int(args[1].Int(ctx))
 	}
 	n, e := of.f.Seek(off, rel)
 	if e != nil {
@@ -75,10 +76,10 @@ func (of *file) seek(args ...runtime.Val) runtime.Val {
 	return runtime.Number(n)
 }
 
-func (of *file) write(args ...runtime.Val) runtime.Val {
+func (of *file) write(ctx context.Context, args ...runtime.Val) runtime.Val {
 	n := 0
 	for _, v := range args {
-		m, e := of.f.WriteString(v.String())
+		m, e := of.f.WriteString(v.String(ctx))
 		if e != nil {
 			panic(e)
 		}
@@ -87,20 +88,20 @@ func (of *file) write(args ...runtime.Val) runtime.Val {
 	return runtime.Number(n)
 }
 
-func (of *file) writeLine(args ...runtime.Val) runtime.Val {
-	n := of.write(args...)
+func (of *file) writeLine(ctx context.Context, args ...runtime.Val) runtime.Val {
+	n := of.write(ctx, args...)
 	m, e := of.f.WriteString("\n")
 	if e != nil {
 		panic(e)
 	}
-	return runtime.Number(int(n.Int()) + m)
+	return runtime.Number(int(n.Int(ctx)) + m)
 }
 
 func (o *OsMod) ID() string {
 	return "os"
 }
 
-func (o *OsMod) Run(_ ...runtime.Val) (v runtime.Val, err error) {
+func (o *OsMod) Run(_ context.Context, _ ...runtime.Val) (v runtime.Val, err error) {
 	defer runtime.PanicToError(&err)
 	if o.ob == nil {
 		// Prepare the object
@@ -130,20 +131,20 @@ func (o *OsMod) SetKtx(ktx *runtime.Kontext) {
 	o.ktx = ktx
 }
 
-func (o *OsMod) os_Exit(args ...runtime.Val) runtime.Val {
+func (o *OsMod) os_Exit(ctx context.Context, args ...runtime.Val) runtime.Val {
 	if len(args) == 0 {
 		os.Exit(0)
 	}
-	os.Exit(int(args[0].Int()))
+	os.Exit(int(args[0].Int(ctx)))
 	return runtime.Nil
 }
 
-func (o *OsMod) os_Getenv(args ...runtime.Val) runtime.Val {
+func (o *OsMod) os_Getenv(ctx context.Context, args ...runtime.Val) runtime.Val {
 	runtime.ExpectAtLeastNArgs(1, args)
-	return runtime.String(os.Getenv(args[0].String()))
+	return runtime.String(os.Getenv(args[0].String(ctx)))
 }
 
-func (o *OsMod) os_Getwd(args ...runtime.Val) runtime.Val {
+func (o *OsMod) os_Getwd(ctx context.Context, args ...runtime.Val) runtime.Val {
 	pwd, err := os.Getwd()
 	if err != nil {
 		panic(err)
@@ -151,9 +152,9 @@ func (o *OsMod) os_Getwd(args ...runtime.Val) runtime.Val {
 	return runtime.String(pwd)
 }
 
-func (o *OsMod) os_Exec(args ...runtime.Val) runtime.Val {
+func (o *OsMod) os_Exec(ctx context.Context, args ...runtime.Val) runtime.Val {
 	runtime.ExpectAtLeastNArgs(1, args)
-	c := exec.Command(args[0].String(), toString(args[1:])...)
+	c := exec.Command(args[0].String(ctx), toString(ctx, args[1:])...)
 	b, e := c.CombinedOutput()
 	if e != nil {
 		panic(e)
@@ -161,7 +162,7 @@ func (o *OsMod) os_Exec(args ...runtime.Val) runtime.Val {
 	return runtime.String(b)
 }
 
-func (o *OsMod) os_Mkdir(args ...runtime.Val) runtime.Val {
+func (o *OsMod) os_Mkdir(ctx context.Context, args ...runtime.Val) runtime.Val {
 	// No-op if no arg
 	if len(args) == 0 {
 		return runtime.Nil
@@ -169,12 +170,12 @@ func (o *OsMod) os_Mkdir(args ...runtime.Val) runtime.Val {
 	perm := os.FileMode(0777)
 	// Last args *may* be the permissions to use if it is a number
 	if l, ok := args[len(args)-1].(runtime.Number); ok {
-		perm = os.FileMode(l.Int())
+		perm = os.FileMode(l.Int(ctx))
 		args = args[:len(args)-1]
 	}
 	// Use the mkdir-all version, to create all missing dirs as required
 	for _, v := range args {
-		if e := os.MkdirAll(v.String(), perm); e != nil {
+		if e := os.MkdirAll(v.String(ctx), perm); e != nil {
 			panic(e)
 		}
 	}
@@ -189,9 +190,9 @@ func createFileInfo(fi os.FileInfo) runtime.Val {
 	return o
 }
 
-func (o *OsMod) os_ReadDir(args ...runtime.Val) runtime.Val {
+func (o *OsMod) os_ReadDir(ctx context.Context, args ...runtime.Val) runtime.Val {
 	runtime.ExpectAtLeastNArgs(1, args)
-	fis, e := ioutil.ReadDir(args[0].String())
+	fis, e := ioutil.ReadDir(args[0].String(ctx))
 	if e != nil {
 		panic(e)
 	}
@@ -202,51 +203,51 @@ func (o *OsMod) os_ReadDir(args ...runtime.Val) runtime.Val {
 	return ob
 }
 
-func (o *OsMod) os_Remove(args ...runtime.Val) runtime.Val {
+func (o *OsMod) os_Remove(ctx context.Context, args ...runtime.Val) runtime.Val {
 	for _, v := range args {
-		if e := os.Remove(v.String()); e != nil {
+		if e := os.Remove(v.String(ctx)); e != nil {
 			panic(e)
 		}
 	}
 	return runtime.Nil
 }
 
-func (o *OsMod) os_RemoveAll(args ...runtime.Val) runtime.Val {
+func (o *OsMod) os_RemoveAll(ctx context.Context, args ...runtime.Val) runtime.Val {
 	for _, v := range args {
-		if e := os.RemoveAll(v.String()); e != nil {
+		if e := os.RemoveAll(v.String(ctx)); e != nil {
 			panic(e)
 		}
 	}
 	return runtime.Nil
 }
 
-func (o *OsMod) os_Rename(args ...runtime.Val) runtime.Val {
+func (o *OsMod) os_Rename(ctx context.Context, args ...runtime.Val) runtime.Val {
 	runtime.ExpectAtLeastNArgs(2, args)
-	if e := os.Rename(args[0].String(), args[1].String()); e != nil {
+	if e := os.Rename(args[0].String(ctx), args[1].String(ctx)); e != nil {
 		panic(e)
 	}
 	return runtime.Nil
 }
 
-func (o *OsMod) os_ReadFile(args ...runtime.Val) runtime.Val {
+func (o *OsMod) os_ReadFile(ctx context.Context, args ...runtime.Val) runtime.Val {
 	runtime.ExpectAtLeastNArgs(1, args)
-	b, e := ioutil.ReadFile(args[0].String())
+	b, e := ioutil.ReadFile(args[0].String(ctx))
 	if e != nil {
 		panic(e)
 	}
 	return runtime.String(b)
 }
 
-func (o *OsMod) os_WriteFile(args ...runtime.Val) runtime.Val {
+func (o *OsMod) os_WriteFile(ctx context.Context, args ...runtime.Val) runtime.Val {
 	runtime.ExpectAtLeastNArgs(1, args)
-	f, e := os.Create(args[0].String())
+	f, e := os.Create(args[0].String(ctx))
 	if e != nil {
 		panic(e)
 	}
 	defer f.Close()
 	n := 0
 	for _, v := range args[1:] {
-		m, e := f.WriteString(v.String())
+		m, e := f.WriteString(v.String(ctx))
 		if e != nil {
 			panic(e)
 		}
@@ -255,19 +256,19 @@ func (o *OsMod) os_WriteFile(args ...runtime.Val) runtime.Val {
 	return runtime.Number(n)
 }
 
-func (o *OsMod) os_TryOpen(args ...runtime.Val) (ret runtime.Val) {
+func (o *OsMod) os_TryOpen(ctx context.Context, args ...runtime.Val) (ret runtime.Val) {
 	defer func() {
 		if e := recover(); e != nil {
 			ret = runtime.Nil
 		}
 	}()
-	ret = o.os_Open(args...)
+	ret = o.os_Open(ctx, args...)
 	return ret
 }
 
-func (o *OsMod) os_Open(args ...runtime.Val) runtime.Val {
+func (o *OsMod) os_Open(ctx context.Context, args ...runtime.Val) runtime.Val {
 	runtime.ExpectAtLeastNArgs(1, args)
-	nm := args[0].String()
+	nm := args[0].String(ctx)
 	flg := "r" // defaults to read-only
 	if len(args) > 1 {
 		// Second arg is the flag (same as C's fopen)
@@ -277,7 +278,7 @@ func (o *OsMod) os_Open(args ...runtime.Val) runtime.Val {
 		// r+ - open for reading and writing, start at beginning
 		// w+ - open for reading and writing (overwrite file)
 		// a+ - open for reading and writing (append if file exists)
-		flg = args[1].String()
+		flg = args[1].String(ctx)
 	}
 	var flgi int
 	switch flg {
@@ -303,10 +304,10 @@ func (o *OsMod) os_Open(args ...runtime.Val) runtime.Val {
 	return o.newFile(f)
 }
 
-func toString(args []runtime.Val) []string {
+func toString(ctx context.Context, args []runtime.Val) []string {
 	s := make([]string, len(args))
 	for i, a := range args {
-		s[i] = a.String()
+		s[i] = a.String(ctx)
 	}
 	return s
 }

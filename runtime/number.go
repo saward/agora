@@ -1,6 +1,7 @@
 package runtime
 
 import (
+	"context"
 	"fmt"
 	"math"
 	"strconv"
@@ -16,26 +17,26 @@ func (f Number) Dump() string {
 }
 
 // Int returns the integer part of the float value.
-func (f Number) Int() int64 {
+func (f Number) Int(context.Context) int64 {
 	return int64(math.Trunc(float64(f)))
 }
 
 // Float returns the float value itself.
-func (f Number) Float() float64 {
+func (f Number) Float(context.Context) float64 {
 	return float64(f)
 }
 
 // String returns a string representation of the float value.
-func (f Number) String() string {
+func (f Number) String(context.Context) string {
 	return strconv.FormatFloat(float64(f), 'f', -1, 64)
 }
 
 // Bool returns true if the float value is non-zero, false otherwise.
-func (f Number) Bool() bool {
+func (f Number) Bool(context.Context) bool {
 	return float64(f) != 0
 }
 
 // Native returns the Go native representation of the value.
-func (f Number) Native() interface{} {
+func (f Number) Native(context.Context) interface{} {
 	return float64(f)
 }

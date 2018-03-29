@@ -1,10 +1,12 @@
 package runtime
 
 import (
+	"context"
 	"testing"
 )
 
 func TestNumberAsInt(t *testing.T) {
+	ctx := context.Background()
 	cases := []struct {
 		x   float64
 		exp int64
@@ -22,7 +24,7 @@ func TestNumberAsInt(t *testing.T) {
 
 	for _, c := range cases {
 		vx := Number(c.x)
-		res := vx.Int()
+		res := vx.Int(ctx)
 		if c.exp != res {
 			t.Errorf("%f as int : expected %d, got %d", c.x, c.exp, res)
 		}
@@ -30,6 +32,7 @@ func TestNumberAsInt(t *testing.T) {
 }
 
 func TestNumberAsFloat(t *testing.T) {
+	ctx := context.Background()
 	cases := []struct {
 		x   float64
 		exp float64
@@ -47,7 +50,7 @@ func TestNumberAsFloat(t *testing.T) {
 
 	for _, c := range cases {
 		vx := Number(c.x)
-		res := vx.Float()
+		res := vx.Float(ctx)
 		if c.exp != res {
 			t.Errorf("%f as float : expected %f, got %f", c.x, c.exp, res)
 		}
@@ -55,6 +58,7 @@ func TestNumberAsFloat(t *testing.T) {
 }
 
 func TestNumberAsString(t *testing.T) {
+	ctx := context.Background()
 	cases := []struct {
 		x   float64
 		exp string
@@ -72,7 +76,7 @@ func TestNumberAsString(t *testing.T) {
 
 	for _, c := range cases {
 		vx := Number(c.x)
-		res := vx.String()
+		res := vx.String(ctx)
 		if c.exp != res {
 			t.Errorf("%f as string : expected %s, got %s", c.x, c.exp, res)
 		}
@@ -80,6 +84,7 @@ func TestNumberAsString(t *testing.T) {
 }
 
 func TestNumberAsBool(t *testing.T) {
+	ctx := context.Background()
 	cases := []struct {
 		x   float64
 		exp bool
@@ -97,7 +102,7 @@ func TestNumberAsBool(t *testing.T) {
 
 	for _, c := range cases {
 		vx := Number(c.x)
-		res := vx.Bool()
+		res := vx.Bool(ctx)
 		if c.exp != res {
 			t.Errorf("%f as bool : expected %v, got %v", c.x, c.exp, res)
 		}

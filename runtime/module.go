@@ -1,6 +1,7 @@
 package runtime
 
 import (
+	"context"
 	"fmt"
 	"io"
 	"os"
@@ -25,7 +26,7 @@ func NewEmptyModuleError(id string) EmptyModuleError {
 // The Module interface defines the required behaviours for a Module.
 type Module interface {
 	ID() string
-	Run(...Val) (Val, error)
+	Run(context.Context, ...Val) (Val, error)
 }
 
 // A NativeModule is a Module with added behaviour required for supporting
@@ -85,7 +86,7 @@ func newAgoraModule(f *bytecode.File, c *Kontext) *agoraModule {
 }
 
 // Run executes the module and returns its return value, or an error.
-func (m *agoraModule) Run(args ...Val) (v Val, err error) {
+func (m *agoraModule) Run(ctx context.Context, args ...Val) (v Val, err error) {
 	defer PanicToError(&err)
 	if len(m.fns) == 0 {
 		return Nil, NewEmptyModuleError(m.ID())
@@ -96,7 +97,7 @@ func (m *agoraModule) Run(args ...Val) (v Val, err error) {
 		fn.ktx.pushModule(m.ID())
 		defer fn.ktx.popModule(m.ID())
 		fv := newAgoraFuncVal(fn, nil)
-		m.v = fv.Call(nil, args...)
+		m.v = fv.Call(ctx, nil, args...)
 	}
 	return m.v, nil
 }

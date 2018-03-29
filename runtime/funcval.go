@@ -1,6 +1,7 @@
 package runtime
 
 import (
+	"context"
 	"fmt"
 )
 
@@ -17,22 +18,22 @@ func (f *funcVal) Dump() string {
 }
 
 // Int is an invalid conversion.
-func (f *funcVal) Int() int64 {
+func (f *funcVal) Int(context.Context) int64 {
 	panic(NewTypeError("func", "", "int"))
 }
 
 // Float is an invalid conversion.
-func (f *funcVal) Float() float64 {
+func (f *funcVal) Float(context.Context) float64 {
 	panic(NewTypeError("func", "", "float"))
 }
 
 // String prints the function representation
-func (f *funcVal) String() string {
+func (f *funcVal) String(context.Context) string {
 	return fmt.Sprintf("<func %s (%p)>", f.name, f)
 }
 
 // Bool returns true.
-func (f *funcVal) Bool() bool {
+func (f *funcVal) Bool(context.Context) bool {
 	return true
 }
 
@@ -74,7 +75,7 @@ func newAgoraFuncVal(def *agoraFuncDef, vm *agoraFuncVM) *agoraFuncVal {
 // Call instantiates an executable function instance from this agora function
 // value, sets the `this` value and executes the function's instructions.
 // It returns the agora function's return value.
-func (a *agoraFuncVal) Call(this Val, args ...Val) Val {
+func (a *agoraFuncVal) Call(ctx context.Context, this Val, args ...Val) Val {
 	// If the function value already has a vm, reuse it, this is a coroutine
 	vm := a.coroState
 	if vm == nil {
@@ -84,11 +85,11 @@ func (a *agoraFuncVal) Call(this Val, args ...Val) Val {
 	vm.this = this
 	a.ktx.pushFn(a, vm)
 	defer a.ktx.popFn()
-	return vm.run(args...)
+	return vm.run(ctx, args...)
 }
 
 // Native returns the Go native representation of an agora function.
-func (a *agoraFuncVal) Native() interface{} {
+func (a *agoraFuncVal) Native(ctx context.Context) interface{} {
 	return a
 }
 

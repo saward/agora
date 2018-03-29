@@ -1,12 +1,15 @@
 package runtime
 
 import (
+	"context"
 	"io"
 	"strings"
 	"testing"
 )
 
 func TestKeys(t *testing.T) {
+	ctx := context.Background()
+
 	bi := new(builtinMod)
 	ktx := NewKtx(nil, nil)
 	bi.SetKtx(ktx)
@@ -50,7 +53,7 @@ func TestKeys(t *testing.T) {
 				o.Set(String("a"), Number(0))
 				o.Set(String("b"), Number(0))
 				o.Set(Number(1), Number(0))
-				o.Set(String("__keys"), NewNativeFunc(ktx, "", func(args ...Val) Val {
+				o.Set(String("__keys"), NewNativeFunc(ktx, "", func(_ context.Context, args ...Val) Val {
 					k := NewObject()
 					k.Set(Number(0), String("b"))
 					k.Set(Number(1), Number(1))
@@ -66,16 +69,16 @@ func TestKeys(t *testing.T) {
 	}
 
 	for i, c := range cases {
-		ret := bi._keys(c.src)
+		ret := bi._keys(ctx, c.src)
 		ob := ret.(Object)
-		l := ob.Len().Int()
+		l := ob.Len(ctx).Int(ctx)
 		if l != int64(len(c.exp)) {
 			t.Errorf("[%d] - expected %d keys, got %d", i, len(c.exp), l)
 		} else {
 			for _, key := range c.exp {
 				// Cannot assume an ordering
 				found := false
-				for k := int64(0); k < ob.Len().Int(); k++ {
+				for k := int64(0); k < ob.Len(ctx).Int(ctx); k++ {
 					if ob.Get(Number(k)) == key {
 						found = true
 						break
@@ -90,6 +93,8 @@ func TestKeys(t *testing.T) {
 }
 
 func TestLen(t *testing.T) {
+	ctx := context.Background()
+
 	cases := []struct {
 		src Val
 		exp int64
@@ -145,14 +150,16 @@ lines`),
 	ktx := NewKtx(nil, nil)
 	bi.SetKtx(ktx)
 	for i, c := range cases {
-		ret := bi._len(c.src)
-		if c.exp != ret.Int() {
-			t.Errorf("[%d] - expected %d, got %d", i, c.exp, ret.Int())
+		ret := bi._len(ctx, c.src)
+		if c.exp != ret.Int(ctx) {
+			t.Errorf("[%d] - expected %d, got %d", i, c.exp, ret.Int(ctx))
 		}
 	}
 }
 
 func TestPanic(t *testing.T) {
+	ctx := context.Background()
+
 	ktx := NewKtx(nil, nil)
 
 	cases := []struct {
@@ -182,7 +189,7 @@ func TestPanic(t *testing.T) {
 		5: {
 			src: &object{
 				map[Val]Val{
-					String("__bool"): NewNativeFunc(ktx, "", func(args ...Val) Val {
+					String("__bool"): NewNativeFunc(ktx, "", func(_ context.Context, args ...Val) Val {
 						return Bool(false)
 					}),
 				},
@@ -202,7 +209,7 @@ func TestPanic(t *testing.T) {
 			err: true,
 		},
 		9: {
-			src: NewNativeFunc(ktx, "", func(args ...Val) Val { return Nil }),
+			src: NewNativeFunc(ktx, "", func(_ context.Context, args ...Val) Val { return Nil }),
 			err: true,
 		},
 		10: {
@@ -216,7 +223,7 @@ func TestPanic(t *testing.T) {
 		12: {
 			src: &object{
 				map[Val]Val{
-					String("__bool"): NewNativeFunc(ktx, "", func(args ...Val) Val {
+					String("__bool"): NewNativeFunc(ktx, "", func(_ context.Context, args ...Val) Val {
 						return Bool(true)
 					}),
 				},
@@ -238,12 +245,14 @@ func TestPanic(t *testing.T) {
 					}
 				}
 			}()
-			bi._panic(c.src)
+			bi._panic(ctx, c.src)
 		}()
 	}
 }
 
 func TestRecover(t *testing.T) {
+	ctx := context.Background()
+
 	ktx := NewKtx(nil, nil)
 
 	cases := []struct {
@@ -287,13 +296,13 @@ func TestRecover(t *testing.T) {
 	bi := new(builtinMod)
 	bi.SetKtx(ktx)
 	for i, c := range cases {
-		f := NewNativeFunc(ktx, "", func(args ...Val) Val {
+		f := NewNativeFunc(ktx, "", func(_ context.Context, args ...Val) Val {
 			if c.panicWith != nil {
 				panic(c.panicWith)
 			}
 			return Nil
 		})
-		ret := bi._recover(f)
+		ret := bi._recover(ctx, f)
 		if c.exp != ret {
 			t.Errorf("[%d] - expected %v, got %v", i, c.exp, ret)
 		}
@@ -301,10 +310,12 @@ func TestRecover(t *testing.T) {
 }
 
 func TestConvBool(t *testing.T) {
+	ctx := context.Background()
+
 	ktx := NewKtx(nil, nil)
 	// For case 9 below
 	ob := NewObject()
-	ob.Set(String("__bool"), NewNativeFunc(ktx, "", func(args ...Val) Val {
+	ob.Set(String("__bool"), NewNativeFunc(ktx, "", func(_ context.Context, args ...Val) Val {
 		return Bool(false)
 	}))
 
@@ -346,7 +357,7 @@ func TestConvBool(t *testing.T) {
 			exp: Bool(true),
 		},
 		8: {
-			src: NewNativeFunc(ktx, "", func(args ...Val) Val { return Nil }),
+			src: NewNativeFunc(ktx, "", func(_ context.Context, args ...Val) Val { return Nil }),
 			exp: Bool(true),
 		},
 		9: {
@@ -368,7 +379,7 @@ func TestConvBool(t *testing.T) {
 					}
 				}
 			}()
-			ret := bm._bool(c.src)
+			ret := bm._bool(ctx, c.src)
 			if ret != c.exp {
 				t.Errorf("[%d] - expected %v, got %v", i, c.exp, ret)
 			}
@@ -377,14 +388,16 @@ func TestConvBool(t *testing.T) {
 }
 
 func TestConvString(t *testing.T) {
+	ctx := context.Background()
+
 	ktx := NewKtx(nil, nil)
 	// For case 8 below
 	ob := NewObject()
-	ob.Set(String("__string"), NewNativeFunc(ktx, "", func(args ...Val) Val {
+	ob.Set(String("__string"), NewNativeFunc(ktx, "", func(_ context.Context, args ...Val) Val {
 		return String("ok")
 	}))
 	// For case 7 below
-	fn := NewNativeFunc(ktx, "nm", func(args ...Val) Val { return Nil })
+	fn := NewNativeFunc(ktx, "nm", func(_ context.Context, args ...Val) Val { return Nil })
 
 	cases := []struct {
 		src   Val
@@ -439,8 +452,8 @@ func TestConvString(t *testing.T) {
 					t.Errorf("[%d] - expected no panic, got %v", i, e)
 				}
 			}()
-			ret := bm._string(c.src)
-			if (c.start && !strings.HasPrefix(ret.String(), c.exp.String())) || (!c.start && ret != c.exp) {
+			ret := bm._string(ctx, c.src)
+			if (c.start && !strings.HasPrefix(ret.String(ctx), c.exp.String(ctx))) || (!c.start && ret != c.exp) {
 				t.Errorf("[%d] - expected %v, got %v", i, c.exp, ret)
 			}
 		}()
@@ -448,10 +461,12 @@ func TestConvString(t *testing.T) {
 }
 
 func TestConvNumber(t *testing.T) {
+	ctx := context.Background()
+
 	ktx := NewKtx(nil, nil)
 	// For case 10 below
 	ob := NewObject()
-	ob.Set(String("__float"), NewNativeFunc(ktx, "", func(args ...Val) Val {
+	ob.Set(String("__float"), NewNativeFunc(ktx, "", func(_ context.Context, args ...Val) Val {
 		return Number(22)
 	}))
 
@@ -497,7 +512,7 @@ func TestConvNumber(t *testing.T) {
 			err: true,
 		},
 		9: {
-			src: NewNativeFunc(ktx, "", func(args ...Val) Val { return Nil }),
+			src: NewNativeFunc(ktx, "", func(_ context.Context, args ...Val) Val { return Nil }),
 			err: true,
 		},
 		10: {
@@ -519,7 +534,7 @@ func TestConvNumber(t *testing.T) {
 					}
 				}
 			}()
-			ret := bm._number(c.src)
+			ret := bm._number(ctx, c.src)
 			if ret != c.exp {
 				t.Errorf("[%d] - expected %v, got %v", i, c.exp, ret)
 			}
@@ -528,6 +543,8 @@ func TestConvNumber(t *testing.T) {
 }
 
 func TestConvType(t *testing.T) {
+	ctx := context.Background()
+
 	ktx := NewKtx(nil, nil)
 
 	cases := []struct {
@@ -551,7 +568,7 @@ func TestConvType(t *testing.T) {
 			exp: "string",
 		},
 		4: {
-			src: NewNativeFunc(ktx, "", func(args ...Val) Val { return Nil }),
+			src: NewNativeFunc(ktx, "", func(_ context.Context, args ...Val) Val { return Nil }),
 			exp: "func",
 		},
 		5: {
@@ -562,8 +579,8 @@ func TestConvType(t *testing.T) {
 	bm := new(builtinMod)
 	bm.SetKtx(ktx)
 	for i, c := range cases {
-		ret := bm._type(c.src)
-		if ret.String() != c.exp {
+		ret := bm._type(ctx, c.src)
+		if ret.String(ctx) != c.exp {
 			t.Errorf("[%d] - expected %s, got %s", i, c.exp, ret)
 		}
 	}

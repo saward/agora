@@ -1,5 +1,7 @@
 package runtime
 
+import "context"
+
 const (
 	// The string representation of the nil value
 	NilString = "nil"
@@ -21,26 +23,26 @@ func (n null) Dump() string {
 }
 
 // Int is an invalid conversion.
-func (n null) Int() int64 {
+func (n null) Int(context.Context) int64 {
 	panic(NewTypeError(Type(n), "", "int"))
 }
 
 // Float is an invalid conversion.
-func (n null) Float() float64 {
+func (n null) Float(context.Context) float64 {
 	panic(NewTypeError(Type(n), "", "float"))
 }
 
 // String returns the string "nil".
-func (n null) String() string {
+func (n null) String(context.Context) string {
 	return NilString
 }
 
 // Bool returns false.
-func (n null) Bool() bool {
+func (n null) Bool(context.Context) bool {
 	return false
 }
 
 // Native returns the Go native representation of the value.
-func (n null) Native() interface{} {
+func (n null) Native(context.Context) interface{} {
 	return nil
 }

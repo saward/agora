@@ -1,6 +1,7 @@
 package stdlib
 
 import (
+	"context"
 	"path/filepath"
 
 	"github.com/bobg/agora/runtime"
@@ -17,7 +18,7 @@ func (fp *FilepathMod) ID() string {
 	return "filepath"
 }
 
-func (fp *FilepathMod) Run(_ ...runtime.Val) (v runtime.Val, err error) {
+func (fp *FilepathMod) Run(_ context.Context, _ ...runtime.Val) (v runtime.Val, err error) {
 	defer runtime.PanicToError(&err)
 	if fp.ob == nil {
 		// Prepare the object
@@ -36,37 +37,37 @@ func (fp *FilepathMod) SetKtx(c *runtime.Kontext) {
 	fp.ktx = c
 }
 
-func (fp *FilepathMod) filepath_Abs(args ...runtime.Val) runtime.Val {
+func (fp *FilepathMod) filepath_Abs(ctx context.Context, args ...runtime.Val) runtime.Val {
 	runtime.ExpectAtLeastNArgs(1, args)
-	s, e := filepath.Abs(args[0].String())
+	s, e := filepath.Abs(args[0].String(ctx))
 	if e != nil {
 		panic(e)
 	}
 	return runtime.String(s)
 }
 
-func (fp *FilepathMod) filepath_Base(args ...runtime.Val) runtime.Val {
+func (fp *FilepathMod) filepath_Base(ctx context.Context, args ...runtime.Val) runtime.Val {
 	runtime.ExpectAtLeastNArgs(1, args)
-	return runtime.String(filepath.Base(args[0].String()))
+	return runtime.String(filepath.Base(args[0].String(ctx)))
 }
 
-func (fp *FilepathMod) filepath_Dir(args ...runtime.Val) runtime.Val {
+func (fp *FilepathMod) filepath_Dir(ctx context.Context, args ...runtime.Val) runtime.Val {
 	runtime.ExpectAtLeastNArgs(1, args)
-	return runtime.String(filepath.Dir(args[0].String()))
+	return runtime.String(filepath.Dir(args[0].String(ctx)))
 }
 
-func (fp *FilepathMod) filepath_Ext(args ...runtime.Val) runtime.Val {
+func (fp *FilepathMod) filepath_Ext(ctx context.Context, args ...runtime.Val) runtime.Val {
 	runtime.ExpectAtLeastNArgs(1, args)
-	return runtime.String(filepath.Ext(args[0].String()))
+	return runtime.String(filepath.Ext(args[0].String(ctx)))
 }
 
-func (fp *FilepathMod) filepath_IsAbs(args ...runtime.Val) runtime.Val {
+func (fp *FilepathMod) filepath_IsAbs(ctx context.Context, args ...runtime.Val) runtime.Val {
 	runtime.ExpectAtLeastNArgs(1, args)
-	return runtime.Bool(filepath.IsAbs(args[0].String()))
+	return runtime.Bool(filepath.IsAbs(args[0].String(ctx)))
 }
 
-func (fp *FilepathMod) filepath_Join(args ...runtime.Val) runtime.Val {
+func (fp *FilepathMod) filepath_Join(ctx context.Context, args ...runtime.Val) runtime.Val {
 	runtime.ExpectAtLeastNArgs(1, args)
-	s := toString(args)
+	s := toString(ctx, args)
 	return runtime.String(filepath.Join(s...))
 }

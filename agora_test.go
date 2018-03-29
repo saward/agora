@@ -3,6 +3,7 @@ package agora
 import (
 	"bufio"
 	"bytes"
+	"context"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -99,6 +100,8 @@ func (t *testResolver) Resolve(id string) (io.Reader, error) {
 }
 
 func runAndAssertFile(t *testing.T, id string, r io.Reader, m map[string]string) {
+	ctx := context.Background()
+
 	// Use the custom test resolver to return the reader
 	buf := bytes.NewBuffer(nil)
 	ktx := runtime.NewKtx(&testResolver{
@@ -124,7 +127,7 @@ func runAndAssertFile(t *testing.T, id string, r io.Reader, m map[string]string)
 				args[i] = runtime.String(arg)
 			}
 		}
-		ret, err = mod.Run(args...)
+		ret, err = mod.Run(ctx, args...)
 	}
 
 	assert := false
@@ -145,7 +148,7 @@ func runAndAssertFile(t *testing.T, id string, r io.Reader, m map[string]string)
 		switch retv := ret.(type) {
 		// compare runtime.Object with special function
 		case runtime.Object:
-			if !objectsAreEqual(retv.String(), v) {
+			if !objectsAreEqual(retv.String(ctx), v) {
 				str := fmt.Sprintf("%s", retv)
 				t.Errorf("[%s] - expected result '%s', got '%s'", id, v, str)
 			}
@@ -155,7 +158,7 @@ func runAndAssertFile(t *testing.T, id string, r io.Reader, m map[string]string)
 				t.Errorf("[%s] - expected result '%s', got '%s'", id, v, str)
 			}
 		default:
-			if retv.String() != v {
+			if retv.String(ctx) != v {
 				t.Errorf("[%s] - expected result '%s', got '%s'", id, v, retv)
 			}
 		}

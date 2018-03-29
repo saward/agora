@@ -1,6 +1,7 @@
 package runtime
 
 import (
+	"context"
 	"math"
 	"testing"
 )
@@ -18,23 +19,23 @@ type arithCase struct {
 // Define a custom type
 type cusType struct{}
 
-func (c cusType) Int() int64 {
+func (c cusType) Int(context.Context) int64 {
 	return 1
 }
-func (c cusType) Float() float64 {
+func (c cusType) Float(context.Context) float64 {
 	return 1.0
 }
-func (c cusType) String() string {
+func (c cusType) String(context.Context) string {
 	return "cus!"
 }
-func (c cusType) Bool() bool {
+func (c cusType) Bool(context.Context) bool {
 	return true
 }
-func (c cusType) Native() interface{} {
+func (c cusType) Native(context.Context) interface{} {
 	return c
 }
-func (c cusType) dump() string {
-	return c.String()
+func (c cusType) dump(ctx context.Context) string {
+	return c.String(ctx)
 }
 
 var (
@@ -43,7 +44,7 @@ var (
 	ari   = defaultArithmetic{}
 	o     = NewObject()
 	oplus = NewObject()
-	fn    = NewNativeFunc(ktx, "", func(_ ...Val) Val { return Nil })
+	fn    = NewNativeFunc(ktx, "", func(_ context.Context, _ ...Val) Val { return Nil })
 	cus   = cusType{}
 
 	// Common cases, same result regardless of operation
@@ -175,11 +176,11 @@ var (
 )
 
 func init() {
-	fRetArg := NewNativeFunc(ktx, "", func(args ...Val) Val {
+	fRetArg := NewNativeFunc(ktx, "", func(_ context.Context, args ...Val) Val {
 		ExpectAtLeastNArgs(2, args)
 		return args[0]
 	})
-	fRetUnm := NewNativeFunc(ktx, "", func(args ...Val) Val {
+	fRetUnm := NewNativeFunc(ktx, "", func(_ context.Context, args ...Val) Val {
 		return Number(-1)
 	})
 	oplus.Set(String("__add"), fRetArg)
@@ -218,6 +219,7 @@ func TestType(t *testing.T) {
 }
 
 func TestArithmetic(t *testing.T) {
+	ctx := context.Background()
 	checkPanic := func(lbl string, i int, p bool) {
 		if e := recover(); (e != nil) != p {
 			if p {
@@ -242,20 +244,20 @@ func TestArithmetic(t *testing.T) {
 				var ret Val
 				switch k {
 				case "add":
-					ret = ari.Add(c.l, c.r)
+					ret = ari.Add(ctx, c.l, c.r)
 				case "sub":
-					ret = ari.Sub(c.l, c.r)
+					ret = ari.Sub(ctx, c.l, c.r)
 				case "mul":
-					ret = ari.Mul(c.l, c.r)
+					ret = ari.Mul(ctx, c.l, c.r)
 				case "div":
-					ret = ari.Div(c.l, c.r)
+					ret = ari.Div(ctx, c.l, c.r)
 				case "mod":
-					ret = ari.Mod(c.l, c.r)
+					ret = ari.Mod(ctx, c.l, c.r)
 				case "unm":
-					ret = ari.Unm(c.l)
+					ret = ari.Unm(ctx, c.l)
 				}
 				if _, ok := ret.(Number); ok {
-					if math.Abs(ret.Float()-c.exp.Float()) > floatCompareBuffer {
+					if math.Abs(ret.Float(ctx)-c.exp.Float(ctx)) > floatCompareBuffer {
 						t.Errorf("[%s %d] - expected %s, got %s", k, i, c.exp, ret)
 					}
 				} else if ret != c.exp {
@@ -267,6 +269,7 @@ func TestArithmetic(t *testing.T) {
 }
 
 func TestComparer(t *testing.T) {
+	ctx := context.Background()
 	cases := []struct {
 		l, r Val
 		exp  int
@@ -347,7 +350,7 @@ func TestComparer(t *testing.T) {
 	}
 	cmp := defaultComparer{}
 	for i, c := range cases {
-		got := cmp.Cmp(c.l, c.r)
+		got := cmp.Cmp(ctx, c.l, c.r)
 		if got != c.exp {
 			t.Errorf("[%d] - expected %d, got %d", i, c.exp, got)
 		}

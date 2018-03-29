@@ -1,6 +1,7 @@
 package runtime
 
 import (
+	"context"
 	"fmt"
 )
 
@@ -23,94 +24,94 @@ func NewTypeError(t1, t2, op string) TypeError {
 // Converter declares the required methods to convert a value
 // to any one of the supported types (except Object and Func).
 type Converter interface {
-	Int() int64
-	Float() float64
-	String() string
-	Bool() bool
-	Native() interface{}
+	Int(context.Context) int64
+	Float(context.Context) float64
+	String(context.Context) string
+	Bool(context.Context) bool
+	Native(context.Context) interface{}
 }
 
 // Arithmetic defines the methods required to compute all
 // the supported arithmetic operations.
 type Arithmetic interface {
-	Add(Val, Val) Val
-	Sub(Val, Val) Val
-	Mul(Val, Val) Val
-	Div(Val, Val) Val
-	Mod(Val, Val) Val
-	Unm(Val) Val
+	Add(context.Context, Val, Val) Val
+	Sub(context.Context, Val, Val) Val
+	Mul(context.Context, Val, Val) Val
+	Div(context.Context, Val, Val) Val
+	Mod(context.Context, Val, Val) Val
+	Unm(context.Context, Val) Val
 }
 
 // The default, standard agora arithmetic implementation.
 type defaultArithmetic struct{}
 
-func (ar defaultArithmetic) binaryOp(l, r Val, op string, allowStrings bool) Val {
+func (ar defaultArithmetic) binaryOp(ctx context.Context, l, r Val, op string, allowStrings bool) Val {
 	lt, rt := Type(l), Type(r)
 	mm := "__" + op
 	if lt == "number" && rt == "number" {
 		// Two numbers, standard arithmetic operation
 		switch op {
 		case "add":
-			return Number(l.Float() + r.Float())
+			return Number(l.Float(ctx) + r.Float(ctx))
 		case "sub":
-			return Number(l.Float() - r.Float())
+			return Number(l.Float(ctx) - r.Float(ctx))
 		case "mul":
-			return Number(l.Float() * r.Float())
+			return Number(l.Float(ctx) * r.Float(ctx))
 		case "div":
-			return Number(l.Float() / r.Float())
+			return Number(l.Float(ctx) / r.Float(ctx))
 		case "mod":
-			return Number(l.Int() % r.Int())
+			return Number(l.Int(ctx) % r.Int(ctx))
 		}
 	} else if allowStrings && lt == "string" && rt == "string" {
 		// Two strings
 		switch op {
 		case "add":
-			return String(l.String() + r.String())
+			return String(l.String(ctx) + r.String(ctx))
 		}
 	} else if lt == "object" {
 		// If left operand is an object with a meta-method
 		lo := l.(Object)
-		if v, ok := lo.callMetaMethod(mm, r, Bool(true)); ok {
+		if v, ok := lo.callMetaMethod(ctx, mm, r, Bool(true)); ok {
 			return v
 		}
 	}
 	// Last chance: if right operand is an object with a meta-method
 	if rt == "object" {
 		ro := r.(Object)
-		if v, ok := ro.callMetaMethod(mm, l, Bool(false)); ok {
+		if v, ok := ro.callMetaMethod(ctx, mm, l, Bool(false)); ok {
 			return v
 		}
 	}
 	panic(NewTypeError(lt, rt, op))
 }
 
-func (ar defaultArithmetic) Add(l, r Val) Val {
-	return ar.binaryOp(l, r, "add", true)
+func (ar defaultArithmetic) Add(ctx context.Context, l, r Val) Val {
+	return ar.binaryOp(ctx, l, r, "add", true)
 }
 
-func (ar defaultArithmetic) Sub(l, r Val) Val {
-	return ar.binaryOp(l, r, "sub", false)
+func (ar defaultArithmetic) Sub(ctx context.Context, l, r Val) Val {
+	return ar.binaryOp(ctx, l, r, "sub", false)
 }
 
-func (ar defaultArithmetic) Mul(l, r Val) Val {
-	return ar.binaryOp(l, r, "mul", false)
+func (ar defaultArithmetic) Mul(ctx context.Context, l, r Val) Val {
+	return ar.binaryOp(ctx, l, r, "mul", false)
 }
 
-func (ar defaultArithmetic) Div(l, r Val) Val {
-	return ar.binaryOp(l, r, "div", false)
+func (ar defaultArithmetic) Div(ctx context.Context, l, r Val) Val {
+	return ar.binaryOp(ctx, l, r, "div", false)
 }
 
-func (ar defaultArithmetic) Mod(l, r Val) Val {
-	return ar.binaryOp(l, r, "mod", false)
+func (ar defaultArithmetic) Mod(ctx context.Context, l, r Val) Val {
+	return ar.binaryOp(ctx, l, r, "mod", false)
 }
 
-func (ar defaultArithmetic) Unm(l Val) Val {
+func (ar defaultArithmetic) Unm(ctx context.Context, l Val) Val {
 	lt := Type(l)
 	if lt == "number" {
-		return Number(-l.Float())
+		return Number(-l.Float(ctx))
 	} else if lt == "object" {
 		lo := l.(Object)
-		if v, ok := lo.callMetaMethod("__unm"); ok {
+		if v, ok := lo.callMetaMethod(ctx, "__unm"); ok {
 			return v
 		}
 	}
@@ -121,7 +122,7 @@ func (ar defaultArithmetic) Unm(l Val) Val {
 // Cmp() returns 1 if the first value is greater, 0 if
 // it is equal, and -1 if it is lower.
 type Comparer interface {
-	Cmp(Val, Val) int
+	Cmp(context.Context, Val, Val) int
 }
 
 var (
@@ -189,7 +190,7 @@ var (
 // The default, standard agora comparer implementation.
 type defaultComparer struct{}
 
-func (dc defaultComparer) Cmp(l, r Val) int {
+func (dc defaultComparer) Cmp(ctx context.Context, l, r Val) int {
 	lt, rt := Type(l), Type(r)
 	if lt == rt {
 		// Comparable types
@@ -197,7 +198,7 @@ func (dc defaultComparer) Cmp(l, r Val) int {
 		case "nil":
 			return 0
 		case "number":
-			lf, rf := l.Float(), r.Float()
+			lf, rf := l.Float(ctx), r.Float(ctx)
 			if lf == rf {
 				return 0
 			} else if lf < rf {
@@ -206,7 +207,7 @@ func (dc defaultComparer) Cmp(l, r Val) int {
 				return 1
 			}
 		case "string":
-			ls, rs := l.String(), r.String()
+			ls, rs := l.String(ctx), r.String(ctx)
 			if ls == rs {
 				return 0
 			} else if ls < rs {
@@ -215,7 +216,7 @@ func (dc defaultComparer) Cmp(l, r Val) int {
 				return 1
 			}
 		case "bool":
-			lb, rb := l.Bool(), r.Bool()
+			lb, rb := l.Bool(ctx), r.Bool(ctx)
 			if lb == rb {
 				return 0
 			} else if lb {
@@ -224,7 +225,7 @@ func (dc defaultComparer) Cmp(l, r Val) int {
 				return -1
 			}
 		case "func":
-			lf, rf := l.Native(), r.Native()
+			lf, rf := l.Native(ctx), r.Native(ctx)
 			if lf == rf {
 				return 0
 			} else {
@@ -234,11 +235,11 @@ func (dc defaultComparer) Cmp(l, r Val) int {
 		case "object":
 			// If left has meta method, use left, otherwise right, else compare
 			lo, ro := l.(Object), r.(Object)
-			if v, ok := lo.callMetaMethod("__cmp", r, Bool(true)); ok {
-				return int(v.Int())
+			if v, ok := lo.callMetaMethod(ctx, "__cmp", r, Bool(true)); ok {
+				return int(v.Int(ctx))
 			}
-			if v, ok := ro.callMetaMethod("__cmp", l, Bool(false)); ok {
-				return int(v.Int())
+			if v, ok := ro.callMetaMethod(ctx, "__cmp", l, Bool(false)); ok {
+				return int(v.Int(ctx))
 			}
 			if lo == ro {
 				return 0
@@ -273,8 +274,8 @@ func (dc defaultComparer) Cmp(l, r Val) int {
 			otherv = l
 		}
 		if o != nil {
-			if v, ok := o.callMetaMethod("__cmp", otherv, Bool(isLeft)); ok {
-				return int(v.Int())
+			if v, ok := o.callMetaMethod(ctx, "__cmp", otherv, Bool(isLeft)); ok {
+				return int(v.Int(ctx))
 			}
 		}
 		// Else, return arbitrary but constant result

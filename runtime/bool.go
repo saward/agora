@@ -1,6 +1,7 @@
 package runtime
 
 import (
+	"context"
 	"fmt"
 )
 
@@ -14,7 +15,7 @@ func (b Bool) Dump() string {
 }
 
 // Int returns 1 if true, 0 if false.
-func (b Bool) Int() int64 {
+func (b Bool) Int(context.Context) int64 {
 	if bool(b) {
 		return 1
 	}
@@ -22,7 +23,7 @@ func (b Bool) Int() int64 {
 }
 
 // Float returns 1 if true, 0 if false.
-func (b Bool) Float() float64 {
+func (b Bool) Float(context.Context) float64 {
 	if bool(b) {
 		return 1.0
 	}
@@ -30,7 +31,7 @@ func (b Bool) Float() float64 {
 }
 
 // String returns "true" if true, "false" otherwise.
-func (b Bool) String() string {
+func (b Bool) String(context.Context) string {
 	if bool(b) {
 		return "true"
 	}
@@ -38,11 +39,11 @@ func (b Bool) String() string {
 }
 
 // Bool returns the boolean value itself.
-func (b Bool) Bool() bool {
+func (b Bool) Bool(context.Context) bool {
 	return bool(b)
 }
 
 // Native returns the bool native Go representation.
-func (b Bool) Native() interface{} {
+func (b Bool) Native(context.Context) interface{} {
 	return bool(b)
 }

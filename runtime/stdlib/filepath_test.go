@@ -1,6 +1,7 @@
 package stdlib
 
 import (
+	"context"
 	"path/filepath"
 	"testing"
 
@@ -8,6 +9,7 @@ import (
 )
 
 func TestFilepathAbs(t *testing.T) {
+	ctx := context.Background()
 	ktx := runtime.NewKtx(nil, nil)
 	fm := new(FilepathMod)
 	fm.SetKtx(ktx)
@@ -17,21 +19,22 @@ func TestFilepathAbs(t *testing.T) {
 	if e != nil {
 		panic(e)
 	}
-	ret := fm.filepath_Abs(runtime.String(p))
-	if ret.String() != exp {
-		t.Errorf("expected '%s', got '%s'", exp, ret.String())
+	ret := fm.filepath_Abs(ctx, runtime.String(p))
+	if ret.String(ctx) != exp {
+		t.Errorf("expected '%s', got '%s'", exp, ret.String(ctx))
 	}
 	// IsAbs
 	{
 		exp := filepath.IsAbs(p)
-		ret := fm.filepath_IsAbs(runtime.String(p))
-		if ret.Bool() != exp {
-			t.Errorf("expected '%v', got '%v'", exp, ret.Bool())
+		ret := fm.filepath_IsAbs(ctx, runtime.String(p))
+		if ret.Bool(ctx) != exp {
+			t.Errorf("expected '%v', got '%v'", exp, ret.Bool(ctx))
 		}
 	}
 }
 
 func TestFilepathBaseDirExt(t *testing.T) {
+	ctx := context.Background()
 	ktx := runtime.NewKtx(nil, nil)
 	fm := new(FilepathMod)
 	fm.SetKtx(ktx)
@@ -41,25 +44,26 @@ func TestFilepathBaseDirExt(t *testing.T) {
 	}
 	// Base
 	exp := filepath.Base(p)
-	ret := fm.filepath_Base(runtime.String(p))
-	if ret.String() != exp {
-		t.Errorf("expected base '%s', got '%s'", exp, ret.String())
+	ret := fm.filepath_Base(ctx, runtime.String(p))
+	if ret.String(ctx) != exp {
+		t.Errorf("expected base '%s', got '%s'", exp, ret.String(ctx))
 	}
 	// Dir
 	exp = filepath.Dir(p)
-	ret = fm.filepath_Dir(runtime.String(p))
-	if ret.String() != exp {
-		t.Errorf("expected dir '%s', got '%s'", exp, ret.String())
+	ret = fm.filepath_Dir(ctx, runtime.String(p))
+	if ret.String(ctx) != exp {
+		t.Errorf("expected dir '%s', got '%s'", exp, ret.String(ctx))
 	}
 	// Ext
 	exp = filepath.Ext(p)
-	ret = fm.filepath_Ext(runtime.String(p))
-	if ret.String() != exp {
-		t.Errorf("expected extension '%s', got '%s'", exp, ret.String())
+	ret = fm.filepath_Ext(ctx, runtime.String(p))
+	if ret.String(ctx) != exp {
+		t.Errorf("expected extension '%s', got '%s'", exp, ret.String(ctx))
 	}
 }
 
 func TestFilepathJoin(t *testing.T) {
+	ctx := context.Background()
 	ktx := runtime.NewKtx(nil, nil)
 	fm := new(FilepathMod)
 	fm.SetKtx(ktx)
@@ -69,8 +73,8 @@ func TestFilepathJoin(t *testing.T) {
 	for i, s := range parts {
 		vals[i] = runtime.String(s)
 	}
-	ret := fm.filepath_Join(vals...)
-	if ret.String() != exp {
-		t.Errorf("expected '%s', got '%s'", exp, ret.String())
+	ret := fm.filepath_Join(ctx, vals...)
+	if ret.String(ctx) != exp {
+		t.Errorf("expected '%s', got '%s'", exp, ret.String(ctx))
 	}
 }

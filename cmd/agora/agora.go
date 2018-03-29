@@ -12,7 +12,9 @@ package main
 
 import (
 	"bytes"
+	"context"
 	"fmt"
+	"go/scanner"
 	"io"
 	"io/ioutil"
 	"os"
@@ -20,7 +22,6 @@ import (
 	"github.com/bobg/agora/bytecode"
 	"github.com/bobg/agora/compiler"
 	"github.com/bobg/agora/compiler/parser"
-	"github.com/bobg/agora/compiler/scanner"
 	"github.com/bobg/agora/runtime"
 	"github.com/bobg/agora/runtime/stdlib"
 	"github.com/jessevdk/go-flags"
@@ -123,7 +124,7 @@ type run struct {
 	Output   string `short:"o" long:"output" description:"output file"`
 }
 
-func (r *run) Execute(args []string) error {
+func (r *run) Execute(ctx context.Context, args []string) error {
 	if len(args) < 1 {
 		return fmt.Errorf("expected an input file")
 	}
@@ -163,7 +164,7 @@ func (r *run) Execute(args []string) error {
 		defer outf.Close()
 		ktx.Stdout = outf
 	}
-	res, err := m.Run(vals...)
+	res, err := m.Run(ctx, vals...)
 	if err == nil && !r.NoResult {
 		fmt.Fprintf(outf, "\n= %s (%T)\n", res, res)
 	}

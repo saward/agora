@@ -2,6 +2,7 @@ package stdlib
 
 import (
 	"bufio"
+	"context"
 	"fmt"
 
 	"github.com/bobg/agora/runtime"
@@ -18,7 +19,7 @@ func (f *FmtMod) ID() string {
 	return "fmt"
 }
 
-func (f *FmtMod) Run(_ ...runtime.Val) (v runtime.Val, err error) {
+func (f *FmtMod) Run(_ context.Context, _ ...runtime.Val) (v runtime.Val, err error) {
 	defer runtime.PanicToError(&err)
 	if f.ob == nil {
 		// Prepare the object
@@ -35,20 +36,20 @@ func (f *FmtMod) SetKtx(c *runtime.Kontext) {
 	f.ktx = c
 }
 
-func toStringIface(args []runtime.Val) []interface{} {
+func toStringIface(ctx context.Context, args []runtime.Val) []interface{} {
 	var ifs []interface{}
 
 	if len(args) > 0 {
 		ifs = make([]interface{}, len(args))
 		for i, v := range args {
-			ifs[i] = v.String()
+			ifs[i] = v.String(ctx)
 		}
 	}
 	return ifs
 }
 
-func (f *FmtMod) fmt_Print(args ...runtime.Val) runtime.Val {
-	ifs := toStringIface(args)
+func (f *FmtMod) fmt_Print(ctx context.Context, args ...runtime.Val) runtime.Val {
+	ifs := toStringIface(ctx, args)
 	n, err := fmt.Fprint(f.ktx.Stdout, ifs...)
 	if err != nil {
 		panic(err)
@@ -56,8 +57,8 @@ func (f *FmtMod) fmt_Print(args ...runtime.Val) runtime.Val {
 	return runtime.Number(n)
 }
 
-func (f *FmtMod) fmt_Println(args ...runtime.Val) runtime.Val {
-	ifs := toStringIface(args)
+func (f *FmtMod) fmt_Println(ctx context.Context, args ...runtime.Val) runtime.Val {
+	ifs := toStringIface(ctx, args)
 	n, err := fmt.Fprintln(f.ktx.Stdout, ifs...)
 	if err != nil {
 		panic(err)
@@ -65,7 +66,7 @@ func (f *FmtMod) fmt_Println(args ...runtime.Val) runtime.Val {
 	return runtime.Number(n)
 }
 
-func (f *FmtMod) fmt_Scanln(args ...runtime.Val) runtime.Val {
+func (f *FmtMod) fmt_Scanln(ctx context.Context, args ...runtime.Val) runtime.Val {
 	var (
 		b, l []byte
 		e    error
@@ -82,7 +83,7 @@ func (f *FmtMod) fmt_Scanln(args ...runtime.Val) runtime.Val {
 	return runtime.String(b)
 }
 
-func (f *FmtMod) fmt_Scanint(args ...runtime.Val) runtime.Val {
+func (f *FmtMod) fmt_Scanint(ctx context.Context, args ...runtime.Val) runtime.Val {
 	var i int
 	if _, e := fmt.Fscanf(f.ktx.Stdin, "%d", &i); e != nil {
 		panic(e)

@@ -1,18 +1,19 @@
 package runtime
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/bobg/agora/bytecode"
 )
 
 // FuncFn represents the Func signature for native functions.
-type FuncFn func(...Val) Val
+type FuncFn func(context.Context, ...Val) Val
 
 // A Func value in Agora is a Val that also implements the Func interface.
 type Func interface {
 	Val
-	Call(this Val, args ...Val) Val
+	Call(ctx context.Context, this Val, args ...Val) Val
 }
 
 // An agoraFuncDef represents an agora function's prototype.
@@ -65,13 +66,13 @@ func ExpectAtLeastNArgs(n int, args []Val) {
 }
 
 // Native returns the Go native representation of the native function type.
-func (n *NativeFunc) Native() interface{} {
+func (n *NativeFunc) Native(context.Context) interface{} {
 	return n
 }
 
 // Call executes the native function and returns its return value.
-func (n *NativeFunc) Call(_ Val, args ...Val) Val {
+func (n *NativeFunc) Call(ctx context.Context, _ Val, args ...Val) Val {
 	n.ktx.pushFn(n, nil)
 	defer n.ktx.popFn()
-	return n.fn(args...)
+	return n.fn(ctx, args...)
 }
