@@ -5,9 +5,9 @@ import (
 	"io"
 	"io/ioutil"
 
-	"github.com/bobg/agora/bytecode"
-	"github.com/bobg/agora/compiler/emitter"
-	"github.com/bobg/agora/compiler/parser"
+	"github.com/saward/agora/bytecode"
+	"github.com/saward/agora/compiler/emitter"
+	"github.com/saward/agora/compiler/parser"
 )
 
 // A Compiler represents the source code compiler. It implements the runtime.Compiler

@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"testing"
 
-	. "github.com/bobg/agora/bytecode/testing"
+	. "github.com/saward/agora/bytecode/testing"
 	"github.com/davecgh/go-spew/spew"
 )
 

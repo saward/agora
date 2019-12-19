@@ -13,9 +13,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/bobg/agora/compiler"
-	"github.com/bobg/agora/runtime"
-	"github.com/bobg/agora/runtime/stdlib"
+	"github.com/saward/agora/compiler"
+	"github.com/saward/agora/runtime"
+	"github.com/saward/agora/runtime/stdlib"
 )
 
 // This test runs all source files in ../testdata/src/*.agora and checks if

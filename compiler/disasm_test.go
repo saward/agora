@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/bobg/agora/bytecode"
-	. "github.com/bobg/agora/bytecode/testing"
+	"github.com/saward/agora/bytecode"
+	. "github.com/saward/agora/bytecode/testing"
 )
 
 var (

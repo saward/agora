@@ -7,11 +7,11 @@ import (
 	"os"
 	"os/exec"
 
-	"github.com/bobg/agora/runtime"
+	"github.com/saward/agora/runtime"
 )
 
 // The os module, as documented in
-// https://github.com/bobg/agora/wiki/Standard-library
+// https://github.com/saward/agora/wiki/Standard-library
 type OsMod struct {
 	ktx *runtime.Kontext
 	ob  runtime.Object

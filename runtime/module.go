@@ -7,7 +7,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/bobg/agora/bytecode"
+	"github.com/saward/agora/bytecode"
 )
 
 // Error raised when a module has no function defined.

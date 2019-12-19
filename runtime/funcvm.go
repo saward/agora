@@ -9,8 +9,8 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/PuerkitoBio/gocoro"
-	"github.com/bobg/agora/bytecode"
+	"github.com/saward/agora/bytecode"
+	"github.com/mna/gocoro"
 )
 
 // An agoraFuncVM is a runnable instance of a function value. It holds the virtual machine

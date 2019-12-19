@@ -6,7 +6,7 @@
 //
 // Installation
 //
-// 			go get github.com/bobg/agora/...
+// 			go get github.com/saward/agora/...
 //
 // Resources
 //
@@ -17,5 +17,5 @@
 // Other documentation exist for the agora language itself, the stdlib, installation,
 // and such.
 //
-// See https://github.com/bobg/agora#readme for more details.
+// See https://github.com/saward/agora#readme for more details.
 package agora

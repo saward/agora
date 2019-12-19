@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/bobg/agora/bytecode"
+	"github.com/saward/agora/bytecode"
 )
 
 // FuncFn represents the Func signature for native functions.

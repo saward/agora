@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/bobg/agora/compiler/token"
+	"github.com/saward/agora/compiler/token"
 )
 
 var (

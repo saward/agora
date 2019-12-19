@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/bobg/agora/compiler/token"
+	"github.com/saward/agora/compiler/token"
 )
 
 // An Arity is loosely used to indicate the components of a parsed Symbol.

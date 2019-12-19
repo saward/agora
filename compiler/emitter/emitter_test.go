@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/bobg/agora/bytecode"
-	"github.com/bobg/agora/compiler/parser"
+	"github.com/saward/agora/bytecode"
+	"github.com/saward/agora/compiler/parser"
 	"github.com/davecgh/go-spew/spew"
 )
 

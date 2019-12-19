@@ -5,11 +5,11 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/bobg/agora/runtime"
+	"github.com/saward/agora/runtime"
 )
 
 // The fmt module, as documented in
-// https://github.com/bobg/agora/wiki/Standard-library
+// https://github.com/saward/agora/wiki/Standard-library
 type FmtMod struct {
 	ktx *runtime.Kontext
 	ob  runtime.Object

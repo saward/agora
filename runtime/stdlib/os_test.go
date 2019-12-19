@@ -7,7 +7,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/bobg/agora/runtime"
+	"github.com/saward/agora/runtime"
 )
 
 func TestOsTryOpen(t *testing.T) {

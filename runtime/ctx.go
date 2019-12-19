@@ -5,7 +5,7 @@ import (
 	"io"
 	"os"
 
-	"github.com/bobg/agora/bytecode"
+	"github.com/saward/agora/bytecode"
 )
 
 type (

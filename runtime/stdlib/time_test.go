@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/bobg/agora/runtime"
+	"github.com/saward/agora/runtime"
 )
 
 func TestTimeConv(t *testing.T) {

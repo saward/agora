@@ -19,11 +19,11 @@ import (
 	"io/ioutil"
 	"os"
 
-	"github.com/bobg/agora/bytecode"
-	"github.com/bobg/agora/compiler"
-	"github.com/bobg/agora/compiler/parser"
-	"github.com/bobg/agora/runtime"
-	"github.com/bobg/agora/runtime/stdlib"
+	"github.com/saward/agora/bytecode"
+	"github.com/saward/agora/compiler"
+	"github.com/saward/agora/compiler/parser"
+	"github.com/saward/agora/runtime"
+	"github.com/saward/agora/runtime/stdlib"
 	"github.com/jessevdk/go-flags"
 )
 
